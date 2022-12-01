@@ -28,6 +28,18 @@ while True:
 			os.mkdir(path_n) 
 		else:
 			print("El path introducido es incorrecto")
+	if "imprimir_directorio" in comando: 
+		path = os.getcwd() # se obtiene el path actual
+		print("El path actual es: ", path) # se imprime en pantalla el path actual
+
+	if "ir" in comando: # recibe como parametro el nuevo directorio al que se quiere ir
+		path = comando[3:len(comando)]
+		if os.path.exists(path):
+			os.chdir(os.path.abspath(path))
+			path_n= os.getcwd()
+			print("El path acutal es: ", path_n)
+		else:
+			print("El path introducido es incorrecto")
 
 	if "salir" in comando:
 		break
