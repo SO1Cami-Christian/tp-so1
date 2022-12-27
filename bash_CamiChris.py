@@ -1,46 +1,66 @@
 import platform
 import subprocess
-import os 
+import os
 import time
 
-print("Binvenido a BashCamiChris 1.0")
-while True:
-	comando = input(">> ")
-	if "listar" in comando:
-		if comando == "listar":
-			path = os.getcwd() # se obtiene el path actual
+def cmdListar(cadena):
+	if(len(cadena) == 6): # se listan los archivos del path actual
+		path = os.getcwd() # se obtiene el path actual
+		lista = os.listdir(path) # se obtienen los archivos
+		print("Archivos en ", path, ":")
+		print(lista)
+	else:
+		cadena = cadena.split(sep=' ')
+		path = cadena[1] # se guarda el path introducido
+		if os.path.exists(path):
 			lista = os.listdir(path) # se obtienen los archivos
 			print("Archivos en ", path, ":")
 			print(lista)
 		else:
-			path = comando[7:len(comando)] # se guarda el path introducido
-			if os.path.exists(path):
-				lista = os.listdir(path) # se obtienen los archivos
-				print("Archivos en ", path, ":")
-				print(lista)
-			else:
-				print("El path ingresado es incorrecto")
-	if "creardir" in comando: # recibe como parametro el path
-		path = comando[9:len(comando)]
-		if os.path.exists(path):
-			nombre_dir=input("Ingresa el nombre del directorio nuevo: ")
-			path_n = os.path.join(path, nombre_dir) # el path con el nombre del directorio
-			os.mkdir(path_n) 
-		else:
-			print("El path introducido es incorrecto")
-	if "imprimir_directorio" in comando: 
-		path = os.getcwd() # se obtiene el path actual
-		print("El path actual es: ", path) # se imprime en pantalla el path actual
+			print("El path ingresado es incorrecto")
 
-	if "ir" in comando: # recibe como parametro el nuevo directorio al que se quiere ir
-		path = comando[3:len(comando)]
-		if os.path.exists(path):
-			os.chdir(os.path.abspath(path))
-			path_n= os.getcwd()
-			print("El path acutal es: ", path_n)
-		else:
-			print("El path introducido es incorrecto")
+def cmdCrearDir(path):
+	if os.path.exists(path): # se verifica que el path introducido existe
+		os.mkdir(os.path.abspath(path)) # se crea el directorio
+	else:
+		print("El path introducido es incorrecto")
 
-	if "salir" in comando:
-		break
+def cmdIr(path):
+	if os.path.exists(path): # se verifica el path introducido
+		os.chdir(os.path.abspath(path))  # se cambia de directorio al path solicitado
+		path_n = os.getcwd() # se obtiene la nueva ubicacion 
+		print("El path actual es: ", path_n)
+	else:
+		print("El path introducido es incorrecto")
 
+def cmdPwd():
+	path = os.getcwd() # se obtiene el path actual
+	print("El path actual es: ", path) # se imprime
+
+def cmdPermisos(cadena):
+	cadena = cadena.split(sep = ' ')
+	permisos = cadena[0]
+	path = cadena[1]
+	if os.path.exists(path):
+		os.chmod(os.path.abspath(path), permisos)
+	else:
+		print("El path introducido es incorrecto")
+
+
+
+def main():
+	print("Binvenido a BashCamiChris 1.0")
+	while True:
+		comando = input(">> ")
+		if (comando[:6] == "listar"): # -> listar o listar [path]
+			cmdListar(comando)
+		elif (comando[:8] == "creardir"): # -> creardir [path]
+			cmdCrearDir(comando[10:])
+		elif (comando == "pwd"): # -> pwd
+			cmdImprimirDirActual()
+		elif (comando[:2] == "ir"): # -> ir [path]
+			cmdIr(comando[3:])
+		elif (comando == "salir"):
+			break
+		elif (comando[:8] == "permisos"): # -> permisos [permisos en Octal] [path]
+			cmdPermisos(comando[:9])
