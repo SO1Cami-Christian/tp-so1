@@ -20,11 +20,14 @@ def cmdListar(cadena):
 		else:
 			print("El path ingresado es incorrecto")
 
-def cmdCrearDir(path):
-	if os.path.exists(path): # se verifica que el path introducido existe
-		os.mkdir(os.path.abspath(path)) # se crea el directorio
-	else:
-		print("El path introducido es incorrecto")
+def cmdCrearDir(cadena):
+	if(cadena.find('/') != -1): # se verifica si se introdujo un path
+		try:
+			os.mkdir(os.path.abspath(cadena)) # se crea el directorio
+		except:
+			print("El path introducido es incorrecto")
+	else: # si no se introdujo un path, el directorio se crea en el path actual
+		os.mkdir(cadena)
 
 def cmdIr(path):
 	if os.path.exists(path): # se verifica el path introducido
@@ -50,7 +53,8 @@ def cmdPermisos(cadena):
 def cmdHistory(comandos): 
 	print("El historial de comandos es:")
 	for i in range(0, len(comandos)):
-		print(i++, ": ", comandos[i])
+		i += 1
+		print(i, ": ", comandos[i])
 
 def cmdEjecutar(cadena):
 	try:
@@ -69,7 +73,7 @@ def main():
 			cmdListar(comando)
 			historial.append("listar")
 		elif (comando[:8] == "creardir"): # -> creardir [path]
-			cmdCrearDir(comando[10:])
+			cmdCrearDir(comando[9:])
 			historial.append("creardir")
 		elif (comando == "pwd"): # -> pwd
 			cmdPwd()
