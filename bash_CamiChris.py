@@ -2,6 +2,7 @@ import platform
 import subprocess
 import os
 import time
+import signal
 
 def cmdListar(cadena):
 	if(len(cadena) == 6): # se listan los archivos del path actual
@@ -46,21 +47,52 @@ def cmdPermisos(cadena):
 	else:
 		print("El path introducido es incorrecto")
 
+def cmdHistory(comandos): 
+	print("El historial de comandos es:")
+	for i in range(0, len(comandos)):
+		print(i++, ": ", comandos[i])
+
+def cmdEjecutar(cadena):
+	try:
+		subprocess.run(cadena.split())
+	except:
+		print("Comando no encontrado")
+
 
 
 def main():
+	historial=[]
 	print("Binvenido a BashCamiChris 1.0")
 	while True:
 		comando = input(">> ")
 		if (comando[:6] == "listar"): # -> listar o listar [path]
 			cmdListar(comando)
+			historial.append("listar")
 		elif (comando[:8] == "creardir"): # -> creardir [path]
 			cmdCrearDir(comando[10:])
+			historial.append("creardir")
 		elif (comando == "pwd"): # -> pwd
-			cmdImprimirDirActual()
+			cmdPwd()
+			historial.append("pwd")
+			
 		elif (comando[:2] == "ir"): # -> ir [path]
 			cmdIr(comando[3:])
+			historial.append("ir")
+			
 		elif (comando == "salir"):
 			break
 		elif (comando[:8] == "permisos"): # -> permisos [permisos en Octal] [path]
 			cmdPermisos(comando[:9])
+			historial.append("permisos")
+			
+		elif (comando[:7] == "history"):
+			cmdHistory(historial)
+			historial.append("permisos")
+			
+		elif (comando[:8] == "ejecutar"):
+			cmdEjecutar(comando[8:])
+			historial.append("ejecutar")
+			
+
+if __name__ == "__main__":
+    main()
