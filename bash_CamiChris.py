@@ -21,13 +21,10 @@ def cmdListar(cadena):
 			print("El path ingresado es incorrecto")
 
 def cmdCrearDir(cadena):
-	if(cadena.find('/') != -1): # se verifica si se introdujo un path
 		try:
 			os.mkdir(os.path.abspath(cadena)) # se crea el directorio
 		except:
 			print("El path introducido es incorrecto")
-	else: # si no se introdujo un path, el directorio se crea en el path actual
-		os.mkdir(cadena)
 
 def cmdIr(path):
 	if os.path.exists(path): # se verifica el path introducido
