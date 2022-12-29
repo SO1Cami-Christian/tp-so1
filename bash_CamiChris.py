@@ -4,6 +4,7 @@ import os
 import time
 import signal
 import shutil
+import distutils.dir_util
 
 def cmdListar(cadena):
 	if(len(cadena) == 6): # se listan los archivos del path actual
@@ -64,22 +65,27 @@ def cmdCopiar(cadena):
 	cadena = cadena.split(sep = ' ')
 	origen = cadena[0]
 	destino = cadena[1]
+	#copiar archivo
 	if os.path.isfile(origen):
-		#destino = os.path.join(destino, os.path.dirname(origen))
+		#creamos directorio si no existe
 		if (os.path.exists(destino) == False):
-			os.makedirs(destino)    #creamos directorio si no existe
-
+			os.makedirs(destino)    
 		try:
 			shutil.copy(origen,destino)
 			print("Archivo copiado exitosamente.")
- 
 		# Se comprueba si el origen y el destino son iguales
 		except shutil.SameFileError:
 			print("El archivo a copiar es el mismo que el de destino.")
- 
-		# Otro error
+	#copiar directorio
+	elif os.path.isdir(src):
+		try:
+			distutils.dir_util.copy_tree(origen,destino)
 		except:
-			print("Error al copiar.")
+			print("Error al copiar directorio.")
+	# Otro error
+	else:
+		print("Error.")
+
 
 
 def main():
