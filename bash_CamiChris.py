@@ -85,11 +85,15 @@ def cmdCopiar(cadena):
 			print("Error al copiar archivo.")
  
 	#copiar directorio
-	elif os.path.isdir(src):
+	elif os.path.isdir(origen):
 		try:
 			distutils.dir_util.copy_tree(origen,destino)
 		except:
 			print("Error al copiar directorio.")
+
+	if(os.path.isfile(origen) == False and os.path.isdir(origen) == False):
+		print("No existe el archivo o directorio.")
+
 	
 def cmdRenombrar(cadena):
 	cadena = cadena.split(sep = ' ')
@@ -117,47 +121,47 @@ def cmdRenombrar(cadena):
 
 def main():
 	historial=[]
-	print("Binvenido a BashCamiChris 1.0")
+	print("Bienvenido/a a BashCamiChris 1.0")
 	while True:
 		comando = input(">> ")
 		if (comando[:6] == "listar"): # -> listar o listar [path]
 			cmdListar(comando)
-			historial.append("listar")
+			historial.append(comando)
 
 		elif (comando[:8] == "creardir"): # -> creardir [path]
 			cmdCrearDir(comando[9:])
-			historial.append("creardir")
+			historial.append(comando)
 
 		elif (comando == "pwd"): # -> pwd
 			cmdPwd()
-			historial.append("pwd")
+			historial.append(comando)
 			
 		elif (comando[:2] == "ir"): # -> ir [path]
 			cmdIr(comando[3:])
-			historial.append("ir")
+			historial.append(comando)
 			
 		elif (comando == "salir"):
 			break
 
 		elif (comando[:8] == "permisos"): # -> permisos [permisos en Octal] [path]
 			cmdPermisos(comando[:9])
-			historial.append("permisos")
+			historial.append(comando)
 			
 		elif (comando[:7] == "history"):
 			cmdHistory(historial)
-			historial.append("history")
+			historial.append(comando)
 			
 		elif (comando[:8] == "ejecutar"):
 			cmdEjecutar(comando[8:])
-			historial.append("ejecutar")
+			historial.append(comando)
 
 		elif (comando[:6] == "copiar"):
 			cmdCopiar(comando[7:])
-			historial.append("copiar")
+			historial.append(comando)
 
 		elif (comando[:9] == "renombrar"):
 			cmdRenombrar(comando[10:])
-			historial.append("renombrar")
+			historial.append(comando)
 
 			
 
