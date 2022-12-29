@@ -113,9 +113,6 @@ def cmdRenombrar(cadena):
 		except:
 			print("Error al renombrar.")
 
-	if(os.path.isfile(original) == False and os.path.isdir(original) == False):
-		print("No existe el archivo o directorio.")
-
 def main():
 	historial=[]
 	print("Binvenido a BashCamiChris 1.0")
