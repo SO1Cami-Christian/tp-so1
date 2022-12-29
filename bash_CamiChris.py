@@ -52,8 +52,7 @@ def cmdPermisos(cadena):
 def cmdHistory(comandos): 
 	print("El historial de comandos es:")
 	for i in range(0, len(comandos)):
-		i += 1
-		print(i, ": ", comandos[i])
+		print(i+1, ": ", comandos[i])
 
 def cmdEjecutar(cadena):
 	try:
