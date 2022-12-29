@@ -3,6 +3,7 @@ import subprocess
 import os
 import time
 import signal
+import shutil
 
 def cmdListar(cadena):
 	if(len(cadena) == 6): # se listan los archivos del path actual
@@ -59,6 +60,26 @@ def cmdEjecutar(cadena):
 	except:
 		print("Comando no encontrado")
 
+def cmdCopiar(cadena):
+	cadena = cadena.split(sep = ' ')
+	origen = cadena[0]
+	destino = cadena[1]
+	if os.path.isfile(origen):
+		#destino = os.path.join(destino, os.path.dirname(origen))
+		if (os.path.exists(destino) == False):
+			os.makedirs(destino)    #creamos directorio si no existe
+
+		try:
+			shutil.copy(origen,destino)
+			print("Archivo copiado exitosamente.")
+ 
+		# Se comprueba si el origen y el destino son iguales
+		except shutil.SameFileError:
+			print("El archivo a copiar es el mismo que el de destino.")
+ 
+		# Otro error
+		except:
+			print("Error al copiar.")
 
 
 def main():
@@ -82,6 +103,7 @@ def main():
 			
 		elif (comando == "salir"):
 			break
+
 		elif (comando[:8] == "permisos"): # -> permisos [permisos en Octal] [path]
 			cmdPermisos(comando[:9])
 			historial.append("permisos")
@@ -93,6 +115,11 @@ def main():
 		elif (comando[:8] == "ejecutar"):
 			cmdEjecutar(comando[8:])
 			historial.append("ejecutar")
+
+		elif (comando[:6] == "copiar"):
+			cmdCopiar(comando[7:])
+			historial.append("copiar")
+
 			
 
 if __name__ == "__main__":
