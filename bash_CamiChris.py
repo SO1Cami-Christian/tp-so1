@@ -108,7 +108,7 @@ def cmdRenombrar(cadena):
 		except:
 			print("Error al renombrar.")
 
-	if os.path.isdir(original):
+	elif os.path.isdir(original):
 		try :
 			os.rename(original,nuevo)
 			print("Renombrado exitosamente.")
@@ -116,8 +116,44 @@ def cmdRenombrar(cadena):
 		except:
 			print("Error al renombrar.")
 
-	if(os.path.isfile(original) == False and os.path.isdir(original) == False):
+	elif(os.path.isfile(original) == False and os.path.isdir(original) == False):
 		print("No existe el archivo o directorio.")
+
+
+def cmdMover(cadena):
+	cadena = cadena.split(sep=' ')
+	oldPath = cadena[0]
+	newPath = cadena[1]
+
+	if os.path.exists(oldPath):
+		try :
+			shutil.move(oldPath,newPath)
+			print("Se movio exitosamente.")
+
+		except:
+			print("Error al mover.")
+
+	else:
+		print("No existe el archivo o directorio.")	
+
+def cmdBuscar(cadena):
+	cadena = cadena.split(sep=' ')
+	path = cadena[0]
+	palabra = cadena[1]
+
+	if(os.path.isfile(path)):
+		a = open(path,"r") # se abre el archivo
+		texto = a.read()  # se guarda el contenido en texto 
+
+		if palabra in texto: # se busca la cadena
+			print("La cadena existe en el archivo.")
+		else:
+			print("La cadena no existe en el archivo.")
+	else:
+		print("No existe el archivo.")
+
+
+
 
 def main():
 	historial=[]
@@ -161,6 +197,14 @@ def main():
 
 		elif (comando[:9] == "renombrar"):
 			cmdRenombrar(comando[10:])
+			historial.append(comando)
+
+		elif (comando[:5] == "mover"):
+			cmdMover(comando[6:])
+			historial.append(comando)
+
+		elif (comando[:6] == "buscar"):
+			cmdBuscar(comando[7:])
 			historial.append(comando)
 
 			
