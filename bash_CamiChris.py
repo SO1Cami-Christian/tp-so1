@@ -429,16 +429,16 @@ def cmdKill():
 		opcion1 = int(input("OPCIONES: \n 1)Ver lista de procesos corriendo \n 2)Ya tengo el PID del proceso que quiero terminar \n Elije una opcion: "))
 		if opcion1 == 1:
 			for proc in psutil.process_iter():
-        	try:
-            	processName = proc.name()
-            	processID = proc.pid
-            	print(processName , ' ::: ', processID)
-        	except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            	pass
-        elif opcion1 == 2:
-        	break
-        else:
-        	print("Opcion fuera de rango, vuelva a ingresar")
+        			try:
+            				processName = proc.name()
+            				processID = proc.pid
+            				print(processName , ' ::: ', processID)
+        			except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            				pass
+        	elif opcion1 == 2:
+        		break
+        	else:
+        		print("Opcion fuera de rango, vuelva a ingresar")
    
     	pid=int(input("Ingresa el pid del proceso: "))
 	os.kill(pid, signal.SIGKILL)
