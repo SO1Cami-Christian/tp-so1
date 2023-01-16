@@ -9,6 +9,171 @@ import ftplib
 import logging
 import psutil # instalar desde la terminal -> pip install psutil
 
+def cmdCopiar(cadena):
+	cadena = cadena.split(sep = ' ')
+	origen = cadena[0]
+	destino = cadena[1]
+
+	#copiar archivo
+	if os.path.isfile(origen):
+		#creamos directorio si no existe
+		if (os.path.exists(destino) == False):
+			os.makedirs(destino)    
+		try:
+			shutil.copy(origen,destino)
+			print("Archivo copiado exitosamente.")
+
+			# Se guarda en el log de movimientos
+			mensaje = "copiar: se copio exitosamente"  
+			logMovimientos(mensaje)
+
+		# Se comprueba si el origen y el destino son iguales
+		except shutil.SameFileError:
+			print("El archivo a copiar es el mismo que el de destino.")
+
+			# Se guarda en el log de errores
+			mensaje = "copiar: El archivo a copiar es el mismo que el de destino."
+			logErrores(mensaje)
+
+		except PermissionError:
+			print("Permission denied.")
+
+			# Se guarda en el log de errores
+			mensaje = "copiar: Permission denied."
+			logErrores(mensaje)
+
+		except:
+			print("Error al copiar archivo.")
+			# Se guarda en el log de errores
+			mensaje = "copiar: Error al copiar archivo."
+			logErrores(mensaje)
+ 
+	#copiar directorio
+	elif os.path.isdir(origen):
+
+		if (os.path.exists(origen) == False):
+			os.makedirs(destino)
+	
+		archivos=os.listdir(origen)
+		for fname in archivos:
+			shutil.copy2(os.path.join(origen,fname), destino) #solo copia archivos dentro del directorio, carpetas no 
+			print("Copiado exitosamente")
+
+			# Se guarda en el log de errores
+			mensaje = "copiar: Error al copiar directorio."
+			logErrores(mensaje)
+
+	if(os.path.isfile(origen) == False and os.path.isdir(origen) == False):
+		print("No existe el archivo o directorio.")
+		# Se guarda en el log de errores
+		mensaje = "copiar: No existe el archivo o directorio."
+		logErrores(mensaje)
+
+	
+def cmdRenombrar(cadena): #Funcion para renombrar directorios
+	cadena = cadena.split(sep = ' ') #se separan los paths en arrays
+	original = cadena[0]
+	nuevo = cadena[1] 
+
+	if os.path.isfile(original): #se verifica si es un archivo
+		try :
+			os.rename(original,nuevo)
+			print("Renombrado exitosamente.")
+
+			# Se guarda en el log de movimientos
+			mensaje = "renombrar: se renombro exitosamente"  
+			logMovimientos(mensaje)
+
+		except:
+			print("Error al renombrar.")
+			# Se guarda en el log de errores
+			mensaje = "renombrar: Error al renombrar."
+			logErrores(mensaje)
+
+
+	elif os.path.isdir(original): #se verifica si es un directorio
+		try :
+			os.rename(original,nuevo)
+			print("Renombrado exitosamente.")
+
+			# Se guarda en el log de movimientos
+			mensaje = "renombrar: se renombro exitosamente"  
+			logMovimientos(mensaje)
+
+		except:
+			print("Error al renombrar.")
+			# Se guarda en el log de errores
+			mensaje = "renombrar: Error al renombrar."
+			logErrores(mensaje)
+
+	elif(os.path.isfile(original) == False and os.path.isdir(original) == False): # si no es un directorio o archivo lanza un print de error
+		print("No existe el archivo o directorio.")
+		# Se guarda en el log de errores
+		mensaje = "renombrar: No existe el archivo o directorio."
+		logErrores(mensaje)
+
+
+def cmdMover(cadena): #Funcion para mover archivos o directorios
+	cadena = cadena.split(sep=' ') #se separan los paths en arrays
+	oldPath = cadena[0]
+	newPath = cadena[1]
+
+	if os.path.exists(oldPath):
+		try :
+			shutil.move(oldPath,newPath) #se actualiza el path
+			print("Se movio exitosamente.")
+
+			# Se guarda en el log de movimientos
+			mensaje = "mover: se movio exitosamente"  
+			logMovimientos(mensaje)
+
+		except:
+			print("Error al mover.")
+			# Se guarda en el log de errores
+			mensaje = "mover: Error al mover."
+			logErrores(mensaje)
+
+
+	else:
+		print("No existe el archivo o directorio.")	
+		# Se guarda en el log de errores
+		mensaje = "mover: No existe el archivo o directorio."
+		logErrores(mensaje)
+
+#Funcion para buscar una cadena dentro de un archivo  -> buscar "cadena a buscar"
+def cmdBuscar(cadena):
+	cadena = cadena.split(sep=' ') #se separan los paths en arrays
+	path = cadena[0]
+	palabra = cadena[1]
+
+	if(os.path.isfile(path)):
+		a = open(path,"r") # se abre el archivo
+		texto = a.read()  # se guarda el contenido en texto 
+
+		if palabra in texto: # se busca la cadena
+			print("La cadena existe en el archivo.")
+
+			# Se guarda en el log de movimientos
+			mensaje = "buscar: se encontro la cadena en el archivo"  
+			logMovimientos(mensaje)
+		else:
+			print("La cadena no existe en el archivo.")
+			# Se guarda en el log de errores
+			mensaje = "buscar: La cadena no existe en el archivo."
+			logErrores(mensaje)
+
+			# Se guarda en el log de movimientos
+			mensaje = "buscar: no se encontro la cadena en el archivo"  
+			logMovimientos(mensaje)
+	else:
+		print("No existe el archivo.")
+		# Se guarda en el log de errores
+		mensaje = "buscar: No existe el archivo."
+		logErrores(mensaje)
+
+
+
+
 # ---LOGS--- #
 	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
 def logTransferencias(status, mensaje):
