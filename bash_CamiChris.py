@@ -687,13 +687,6 @@ def main():
 			cmdAddUser()
 			historial.append(comando)
 
-		elif (comando[:9]=="renombrar"):
-			cmdRenombrar(comando[10:])
-			historial.append("renombrar")
-		
-		elif(comando[:5]=="mover"):
-			cmdMover(comando[6:])
-			historial.append("mover")
 		elif(comando == "hora"): #esta de prueba
 			control_horario()
 
