@@ -13,6 +13,9 @@ import socket
 import sys
 import getpass
 from re import split
+import crypt
+import spwd
+from hmac import compare_digest as compare_hash
 
 # ---LOGS--- #
 	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
@@ -406,7 +409,7 @@ def cmdKill():
 def cmdCopiar(cadena):
     # Se separa el argumento por los espacios
 	cadena = cadena.split(sep = ' ')
-	print("Cantidad=", len(cadena))
+	#print("Cantidad=", len(cadena))
     # El path de destino esta es el ultimo objeto del argumento
 	destino = cadena[len(cadena)-1] 
     
@@ -496,6 +499,71 @@ def cmdMover(cadena):
 			# Se guarda en el log de errores
 			mensaje = "mover: No existe el archivo o directorio " + cadena[i]
 			logErrores(mensaje)
+
+# Funcion para cambiar la contrasena de username
+def change_passwd(username):
+    datos=[]
+    print("Ingresa la nueva contrasena:  ")
+    new_passwd=getpass.getpass()
+
+    print("Reconfirma la contrasena: ")
+    new_passwd_r=getpass.getpass()
+
+    if new_passwd==new_passwd_r:
+        cryptedpasswd=crypt.crypt(new_passwd, crypt.mksalt(crypt.METHOD_SHA512))
+        
+        
+        # Abrimos el archivo shadow
+        with open("/etc/shadow", "r+") as file:
+            # Guardamos toda la info de shadow en datos
+            for linea in file:
+                datos.append(linea.strip().split(":"))
+        # Nos ubicamos al principio del archivo
+            file.seek(0)
+        # Buscamos la linea donde esta la info del usuario del que queremos cambiar la contra
+            for i in range(len(datos)):
+                if username==datos[i][0]:
+                    # Se cambia por la nueva contrasena
+                    datos[i][1]=cryptedpasswd
+                datos[i]=":".join(datos[i])
+                file.write(datos[i]+ "\n")
+        print("Nueva contrasena establecida")
+        # Se guarda el mensaje en el log
+        msj="passwd: se establecio la contrasena de " + username
+        logMovimientos(msj)
+
+        
+    else:
+        print("Las contrasenas no coinciden")
+        # Se guarda el mensaje en el log
+        msj="password: no se pudo establecer contrasena porque al reconfimar no coinciden"
+        logErrores(msj)
+
+# Funcion para verificar la contrasena del usuario
+def login():
+	# Se pide el usuario del que se quiere cambiar la contrasena
+    username=input("Ingresa el nombre de usuario: ")
+	# Se obtiene la contrasena del archivo shadow
+    actual_passwd=spwd.getspnam(username)
+    cryptedpasswd=actual_passwd.sp_pwdp
+    if cryptedpasswd:
+		# Se verifica la contrasena actual
+        print("Ingresa la contrasena actual de ", username)
+        passwd=getpass.getpass()
+        if compare_hash(crypt.crypt(passwd, cryptedpasswd), cryptedpasswd):
+            print("Contrasena correcta")
+            change_passwd(cryptedpasswd, username)
+        else:
+            print("Contrasena incorrecta")
+            # Se guarda el mensaje en el log
+            msj="password: contrasena incorrecta al verificar usuario"
+            logErrores(msj)
+    else:
+        print("Error")
+        # Se guarda el mensaje en el log
+        msj="password: no existe el usuario"
+        logErrores(msj)
+
 
 def control_horario(tiempo): # Funcion que controla registra el horario de salida y entrada, y verfica los horarios e ips correspondientes
 	hora = time.strftime("%X") # Se obtiene la hora actual en el formato 00:00:00
@@ -601,7 +669,7 @@ def cmdAddUser():
 	print(mensaje)	
 	try:
 		string = "\n" + nombre + ":x:" + id + ":" + id + ":" + nombre + ":/home/" + nombre + ":/bin/bash"
-		archivo = open("/etc/passwd", "w") 
+		archivo = open("/etc/passwd", "a") 
 		archivo.writelines(string) #Se agrega el nuevo usuario en la ruta /etc/passwd
 		archivo.close()
 		string2 = "\n" + nombre +":x:" + id +":"
@@ -696,6 +764,10 @@ def main():
 				
 		elif(comando[:5] == "getip"):
 			getIp(1)
+		
+		elif(comando[:8]=="password"):
+			login()
+			historial.append("password")
 			
 
 if __name__ == "__main__":
