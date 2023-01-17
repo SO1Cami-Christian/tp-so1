@@ -8,6 +8,10 @@ import shutil
 import ftplib
 import logging
 import psutil # instalar desde la terminal -> pip install psutil
+import socket
+import sys
+import getpass
+from re import split
 
 # ---LOGS--- #
 	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
@@ -417,7 +421,7 @@ def cmdCopiar(cadena):
 
         # Si lo que se quiere copiar es un archivo
 		except OSError as err: 
-			if err.errno==errno.ENOTDIR:
+			if err.errno==err.ENOTDIR:
 				shutil.copy2(cadena[i], destino)
 				print("Se copio exitosamente el archivo ", cadena[i])
 
@@ -617,7 +621,7 @@ def main():
 	historial=[]
 	#tiempo = 0
 	#control_horario(tiempo)
-	print("Binvenido a BashCamiChris 1.0")
+	print("Bienvenido a BashCamiChris 1.0")
 	while True:
 		comando = input(">> ")
 
