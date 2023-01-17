@@ -52,6 +52,66 @@ def logMovimientos(mensaje):
 	# Se escribe el mensaje 
 	logger.info(mensaje)
 
+def logRegistroUsuarios(message):
+    #creamos/llamamos al log
+    log = logging.getLogger('registroUsuarios')
+    log.setLevel(logging.INFO)
+    #creamos el archivo donde se van a almacenar los registros
+    fileHandler = logging.FileHandler('/home/chris/Downloads/tp-so1/registroUsuarios.log')
+    fileHandler.setLevel(logging.INFO)
+    #le damos el formato deseado
+    formato = logging.Formatter('%(name)s : %(asctime)s : %(message)s')
+    fileHandler.setFormatter(formato)
+    #agregamos al log
+    log.addHandler(fileHandler)
+    #establecemos el mensaje
+    log.info(message)
+    #cerramos el log
+    log.removeHandler(fileHandler)
+    fileHandler.flush()
+    fileHandler.close()
+
+# Funcion para generar las violaciones de los horarios de los usuarios
+def logusuarioHorarios(message):
+    #creamos/llamamos al log
+    log = logging.getLogger('usuarioHorarios')
+    log.setLevel(logging.WARNING)
+    #creamos el archivo donde se van a almacenar los registros
+    fileHandler = logging.FileHandler('/var/log/shell/usuario_horarios.log')
+    fileHandler.setLevel(logging.WARNING)
+    #le damos el formato deseado
+    formato = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
+    fileHandler.setFormatter(formato)
+    #agregamos al log
+    log.addHandler(fileHandler)
+    #establecemos el mensaje
+    log.warning(message)
+    #cerramos el log
+    log.removeHandler(fileHandler)
+    fileHandler.flush()
+    fileHandler.close()
+
+def logRegistroDiario(message):
+    try:
+        #creamos/llamamos al log
+        log = logging.getLogger('registroDiario')
+        log.setLevel(logging.DEBUG)
+        #creamos el archivo donde se van a almacenar los registros
+        fileHandler = logging.FileHandler('/var/log/shell/comandos.log')
+        fileHandler.setLevel(logging.DEBUG)
+        #le damos el formato deseado
+        formato = logging.Formatter('%(asctime)s : %(message)s')
+        fileHandler.setFormatter(formato)
+        #agregamos al log
+        log.addHandler(fileHandler)
+        #establecemos el mensaje
+        log.debug(message)
+        #cerramos el log
+        log.removeHandler(fileHandler)
+        fileHandler.flush()
+        fileHandler.close()
+    except:
+        log.fatal('Error inesperado al agregar log')
 
 
 # ---COMANDOS--- #
@@ -432,11 +492,131 @@ def cmdMover(cadena):
 			mensaje = "mover: No existe el archivo o directorio " + cadena[i]
 			logErrores(mensaje)
 
+def control_horario(tiempo): # Funcion que controla registra el horario de salida y entrada, y verfica los horarios e ips correspondientes
+	hora = time.strftime("%X") # Se obtiene la hora actual en el formato 00:00:00
+	hora = hora.split(":")
+	hora = hora[0] + "." + hora[1]
+	hora = float(hora)
+	usuario = getpass.getuser() # Se obtiene el usuario
+	print("Hora de inicio: ",hora)
+	linea = []
+	try: 
+		with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
+			for line in file:
+				if usuario in line: #Se obtiene la linea donde se encuentra la informacion del usuario
+					linea.append(line)
+	except:
+		print("error")
+	linea = str(linea) 
+	linea = linea.split(sep = " ") # Se quitan los datos de la cadena donde se encuentra la informacion del usuario
+	horario_inicio_oficial = linea[7]
+	horario_inicio_oficial = horario_inicio_oficial.split(sep = ":")
+	horario_inicio_oficial = horario_inicio_oficial[0] + "." + horario_inicio_oficial[1]
+	horario_inicio_oficial = float(horario_inicio_oficial)
+	horario_salida_oficial = linea[8]
+	horario_salida_oficial = horario_salida_oficial.split(sep = ":")
+	horario_salida_oficial = horario_salida_oficial[0] + "." + horario_salida_oficial[1]
+	horario_salida_oficial = float(horario_salida_oficial[:5])
+	ip_oficial = linea[6]
+	ip_actual = getIp(0)
+	if tiempo==0 :
+		if hora < horario_inicio_oficial or hora > horario_inicio_oficial: # Se verifica y registra el horario de inicio de sesion
+			mensaje = usuario + " inicio sesion fuera del rango del rango horario"
+			logusuarioHorarios(mensaje)
+		else:
+			mensaje = usuario +" Inicio sesion dentro del rango horario"
+			logRegistroDiario(mensaje)
 
+		if ip_oficial != ip_actual:
+			mensaje = "La ip no esta habilitada, ip: " + ip_actual
+			logRegistroDiario(mensaje)
+
+		else: 
+			mensaje = "Inicio sesion con la ip habilitada" + ip_actual
+			logRegistroDiario(mensaje)
+
+	if tiempo==1 :
+		if hora < horario_inicio_oficial or hora > horario_inicio_oficial: #Se verifica y registra el horario de cierre de sesion
+			mensaje = usuario + " cerro sesion fuera del rango horario"
+			logusuarioHorarios(mensaje)
+		mensaje = usuario + "Cerro sesion dentro del rango horario"
+		logRegistroDiario(mensaje)
+
+	print(horario_inicio_oficial,horario_salida_oficial)
+
+def cmdPropietario(cadena):  #Funcion para cambiar de propietarios  Formato USUARIO:GRUPO
+	cadena = cadena.split(sep=' ') #se separa la cadena
+	path = cadena[0]
+	ids = cadena[1]
+	ids = ids.split(seo=':')
+	uid = ids[0]
+	gid = ids[1]
+	if os.path.exists(path):
+		try:
+			os.chown(path, uid, gid)
+			print("Se cambio de propietario exitosamente")
+		except:
+			print("Error al realizar operacion")
+	else:
+		print("No existe el archivo")
+
+def getIp(print_ip): #Funcion para obtener la ip del usuario
+## getting the hostname by socket.gethostname() method
+	hostname = socket.gethostname()
+## getting the IP address using socket.gethostbyname() method
+	ip_address = socket.gethostbyname(hostname)
+	if print_ip == 1 :
+		print(ip_address)
+	return ip_address 
+
+def isIPv4(s): #Funcion que verifica que sea una ip de tipo ipv4
+         try: return str(int(s)) == s and 0 <= int(s) <= 255
+         except: return False
+
+def cmdAddUser():
+	nombre = input("Nombre de usuario: ")
+	#contrasena = input("Ingrese la contrasena: ")
+	ip = input("Ingrese su ip: ")
+	ip = isIPv4(ip)
+	while ip == False:
+		ip = input("Ingrese su ip: ")
+		ip = isIPv4(ip)
+	with open("/etc/passwd") as file: #Se accede al archivo donde se encuentran los usuarios
+		for line in file:
+			pass
+		last_line = line #Se guarda la id del ultimo usuario
+
+	idchar= split("\D+", last_line)
+	id = int(idchar[1])
+	id = id +1 #Se le suma 1 a la id del usuario anterior para obtener una nueva id unica
+	id = str(id) 
+	horario_de_entrada = input("Ingrese horario entrada(formato 00:00): ")
+	horario_de_salida = input("Ingrese horario salida(formato 00:00): ")
+	mensaje = nombre + " " + ip + " " + horario_de_entrada + " " + horario_de_salida
+	print(mensaje)	
+	try:
+		string = "\n" + nombre + ":x:" + id + ":" + id + ":" + nombre + ":/home/" + nombre + ":/bin/bash"
+		archivo = open("/etc/passwd", "w") 
+		archivo.writelines(string) #Se agrega el nuevo usuario en la ruta /etc/passwd
+		archivo.close()
+		string2 = "\n" + nombre +":x:" + id +":"
+		archivo2 = open("/etc/group", "w")
+		archivo2.writelines(string2) #Se le asigna un grupo al nuevo usuario en la ruta /etc/group
+		archivo2.close()
+		subprocess.run("passwd", nombre)
+		cmdCrearDir("/home/"+nombre) #Se crea un directorio home para el nuevo usuario
+		cmdCopiar("/etc/skel/.bash*" +"  "+ "/home/" + nombre) #Se copia la ruta /etc/skel/.bash* al directorio home 
+		logRegistroDiario(mensaje)
+
+	except:
+		mensaje = "Error al agregar usuario"
+		print(mensaje)
 
 #Funcion main
 def main():
 	historial=[]
+	#tiempo = 0
+	#control_horario(tiempo)
 	print("Binvenido a BashCamiChris 1.0")
 	while True:
 		comando = input(">> ")
@@ -458,6 +638,8 @@ def main():
 			historial.append("ir")
 			
 		elif (comando == "salir"):
+			#tiempo = 1
+			#control_horario(tiempo)
 			break
 
 		elif (comando[:8] == "permisos"):
@@ -496,17 +678,19 @@ def main():
 			cmdKill()
 			historial.append("kill")
 		
-		elif(comando[:6]=="copiar"):
-			cmdCopiar(comando[7:])
-			historial.append("copiar")
+		elif (comando[:7] == "adduser"): #agregar usuario
+			cmdAddUser()
+			historial.append(comando)
 
-		elif (comando[:9]=="renombrar"):
-			cmdRenombrar(comando[10:])
-			historial.append("renombrar")
-		
-		elif(comando[:5]=="mover"):
-			cmdMover(comando[6:])
-			historial.append("mover")
+		elif(comando == "hora"): #esta de prueba
+			control_horario()
+
+		elif (comando[:11] == "propietario"):
+			cmdPropietario(comando[12:])
+			historial.append(comando)
+				
+		elif(comando[:5] == "getip"):
+			getIp(1)
 			
 
 if __name__ == "__main__":
