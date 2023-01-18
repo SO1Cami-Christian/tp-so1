@@ -60,66 +60,38 @@ def logMovimientos(mensaje):
 	# Se escribe el mensaje 
 	logger.info(mensaje)
 
-def logRegistroUsuarios(message):
-    #creamos/llamamos al log
-    log = logging.getLogger('registroUsuarios')
-    log.setLevel(logging.INFO)
-    #creamos el archivo donde se van a almacenar los registros
-    fileHandler = logging.FileHandler('/home/chris/Downloads/tp-so1/registroUsuarios.log')
-    fileHandler.setLevel(logging.INFO)
-    #le damos el formato deseado
-    formato = logging.Formatter('%(name)s : %(asctime)s : %(message)s')
-    fileHandler.setFormatter(formato)
-    #agregamos al log
-    log.addHandler(fileHandler)
-    #establecemos el mensaje
-    log.info(message)
-    #cerramos el log
-    log.removeHandler(fileHandler)
-    fileHandler.flush()
-    fileHandler.close()
+def logRegistroUsuarios(mensaje):
+	logging.basicConfig(filename='/home/chris/Downloads/tp-so1/registro_usuarios.log',
+						filemode='w',
+						level=logging.INFO,
+						format='%(asctime)s %(message)s')
+	# Creamos el objeto logger
+	logger = logging.getLogger()
 
-# Funcion para generar las violaciones de los horarios de los usuarios
-def logusuarioHorarios(message):
-    #creamos/llamamos al log
-    log = logging.getLogger('usuarioHorarios')
-    log.setLevel(logging.WARNING)
-    #creamos el archivo donde se van a almacenar los registros
-    fileHandler = logging.FileHandler('/var/log/shell/usuario_horarios.log')
-    fileHandler.setLevel(logging.WARNING)
-    #le damos el formato deseado
-    formato = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
-    fileHandler.setFormatter(formato)
-    #agregamos al log
-    log.addHandler(fileHandler)
-    #establecemos el mensaje
-    log.warning(message)
-    #cerramos el log
-    log.removeHandler(fileHandler)
-    fileHandler.flush()
-    fileHandler.close()
+	# Se escribe el mensaje 
+	logger.info(mensaje)
+    
+def logusuarioHorarios(mensaje):
+	logging.basicConfig(filename='/var/log/shell/usuario_horarios.log',
+						filemode='w',
+						level=logging.INFO,
+						format='%(asctime)s %(message)s')
+	# Creamos el objeto logger
+	logger = logging.getLogger()
 
-def logRegistroDiario(message):
-    try:
-        #creamos/llamamos al log
-        log = logging.getLogger('registroDiario')
-        log.setLevel(logging.DEBUG)
-        #creamos el archivo donde se van a almacenar los registros
-        fileHandler = logging.FileHandler('/var/log/shell/comandos.log')
-        fileHandler.setLevel(logging.DEBUG)
-        #le damos el formato deseado
-        formato = logging.Formatter('%(asctime)s : %(message)s')
-        fileHandler.setFormatter(formato)
-        #agregamos al log
-        log.addHandler(fileHandler)
-        #establecemos el mensaje
-        log.debug(message)
-        #cerramos el log
-        log.removeHandler(fileHandler)
-        fileHandler.flush()
-        fileHandler.close()
-    except:
-        log.fatal('Error inesperado al agregar log')
+	# Se escribe el mensaje 
+	logger.info(mensaje)
+
+def logRegistroDiario(mensaje):
+	logging.basicConfig(filename='/var/log/shell/registro_diario.log',
+						filemode='w',
+						level=logging.INFO,
+						format='%(asctime)s %(message)s')
+	# Creamos el objeto logger
+	logger = logging.getLogger()
+
+	# Se escribe el mensaje 
+	logger.info(mensaje)
 
 
 # ---COMANDOS--- #
@@ -626,12 +598,31 @@ def cmdPropietario(cadena):  #Funcion para cambiar de propietarios  Formato USUA
 	gid = ids[1]
 	if os.path.exists(path):
 		try:
-			os.chown(path, uid, gid)
-			print("Se cambio de propietario exitosamente")
+			with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
+				for line in file:
+					if uid in line: #Se obtiene la linea donde se encuentra la informacion del usuario
+						with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file:
+							for line in file:
+								if gid in line: #Se obtiene la linea donde se encuentra la informacion del usuario
+									os.chown(path, uid, gid)
+									print("Se cambio de propietario exitosamente")
+									mensaje = "propietario: se cambio de propietario " + path
+									logMovimientos(mensaje)
+								else:
+									mensaje = "propietario: no existe el gid " + gid
+									logErrores(mensaje)
+					else:
+						mensaje = "propietario: no existe el uid " + uid
+						logErrores(mensaje)
+
 		except:
 			print("Error al realizar operacion")
+			mensaje = "propietario: error al realizar la operacion"
+			logErrores(mensaje)
 	else:
 		print("No existe el archivo")
+		mensaje = "propietario: no existe el archivo" + path
+		logErrores(mensaje)
 
 def getIp(print_ip): #Funcion para obtener la ip del usuario
 ## getting the hostname by socket.gethostname() method
@@ -649,11 +640,16 @@ def isIPv4(s): #Funcion que verifica que sea una ip de tipo ipv4
 def cmdAddUser():
 	nombre = input("Nombre de usuario: ")
 	#contrasena = input("Ingrese la contrasena: ")
+	while True:
+		contrasena = getpass.getpass("contrasena: ")
+		contrasena2 = getpass.getpass("vuelva a ingresar la contrasena: ")
+		if contrasena == contrasena2:
+			break
 	ip = input("Ingrese su ip: ")
-	#ip = isIPv4(ip)
+	"""#ip = isIPv4(ip)
 	while ip == False:
 		ip = input("Ingrese su ip: ")
-		ip = isIPv4(ip)
+		#ip = isIPv4(ip)"""
 	with open("/etc/passwd") as file: #Se accede al archivo donde se encuentran los usuarios
 		for line in file:
 			pass
@@ -666,9 +662,9 @@ def cmdAddUser():
 	horario_de_entrada = input("Ingrese horario entrada(formato 00:00): ")
 	horario_de_salida = input("Ingrese horario salida(formato 00:00): ")
 	mensaje = nombre + " " + ip + " " + horario_de_entrada + " " + horario_de_salida
-	print(mensaje)	
+	print(mensaje)
 	try:
-		string = nombre + ":x:" + id + ":" + id + ":" + nombre + ":/home/" + nombre + ":/bin/sh" + "\n"
+		string = nombre + ":x:" + id + ":" + id + ":" + nombre + ":/home/" + nombre + ":/bin/bash" + "\n"
 		archivo = open("/etc/passwd", "a") 
 		archivo.writelines(string) #Se agrega el nuevo usuario en la ruta /etc/passwd
 		archivo.close()
@@ -677,13 +673,28 @@ def cmdAddUser():
 		archivo2.writelines(string2) #Se le asigna un grupo al nuevo usuario en la ruta /etc/group
 		archivo2.close()
 		cmdCrearDir("/home/"+nombre) #Se crea un directorio home para el nuevo usuario
-		cmdCopiar("/etc/skel/.bash*" + " " + "/home/" + nombre) #Se copia la ruta /etc/skel/.bash* al directorio home
-		logRegistroDiario(mensaje)
-		subprocess.run("passwd", nombre)
+		shutil.copytree("/etc/skel", "/home" + nombre)
+		usuario = nombre + ":" + crypt.crypt(contrasena2,crypt.mksalt(crypt.METHOD_SHA512)) + ":18944:0:99999:7:::\n"
+		with open("/etc/shadow", "a") as file:
+			file.write(usuario)
+		mensaje = "adduser: se agrego el usuario" + nombre 
+		logMovimientos(mensaje)
 
 	except:
 		mensaje = "Error al agregar usuario"
-		print(mensaje)
+		logErrores(mensaje)
+
+def levantar_demonios():
+	try:
+		os.fork()
+		mensaje = "levantar: se levanto un proceso con pid" + str(os.fork())
+		logMovimientos(mensaje)
+	except:
+		mensaje = "levantar: error al levantar demonio"
+		logErrores(mensaje)
+
+
+
 
 #Funcion main
 def main():
@@ -768,7 +779,10 @@ def main():
 		elif(comando[:8]=="password"):
 			login()
 			historial.append("password")
-			
+		
+		elif(comando == "levantar"):
+			levantar_demonios()
+			historial.append("password")
 
 if __name__ == "__main__":
     main()
