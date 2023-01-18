@@ -1,3 +1,4 @@
+import warnings
 import platform
 import subprocess
 import os
@@ -13,6 +14,7 @@ import socket
 import sys
 import getpass
 from re import split
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 import crypt
 import spwd
 from hmac import compare_digest as compare_hash
@@ -21,7 +23,7 @@ from hmac import compare_digest as compare_hash
 	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
 def logTransferencias(status, mensaje):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/chris/Desktop/LOGS/shell_transferencias.log',
+	logging.basicConfig(filename='/var/log/shell/shell_transferencias.log',
 						filemode='w',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -38,7 +40,7 @@ def logTransferencias(status, mensaje):
 
 def logErrores(mensaje):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/camidorego/Desktop/LOGS/sistema_error.log',
+	logging.basicConfig(filename='/var/log/shell/sistema_error.log',
 						filemode='w',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -50,7 +52,7 @@ def logErrores(mensaje):
 
 def logMovimientos(mensaje):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/chris/Desktop/LOGS/registro_movimientos.log',
+	logging.basicConfig(filename='/var/log/shell/registro_movimientos.log',
 						filemode='w',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -61,7 +63,7 @@ def logMovimientos(mensaje):
 	logger.info(mensaje)
 
 def logRegistroUsuarios(mensaje):
-	logging.basicConfig(filename='/home/chris/Downloads/tp-so1/registro_usuarios.log',
+	logging.basicConfig(filename='/var/log/shell/registro_usuarios.log',
 						filemode='w',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -524,7 +526,7 @@ def login():
         passwd=getpass.getpass()
         if compare_hash(crypt.crypt(passwd, cryptedpasswd), cryptedpasswd):
             print("Contrasena correcta")
-            change_passwd(cryptedpasswd, username)
+            change_passwd(username)
         else:
             print("Contrasena incorrecta")
             # Se guarda el mensaje en el log
@@ -782,7 +784,7 @@ def main():
 		
 		elif(comando == "levantar"):
 			levantar_demonios()
-			historial.append("password")
+			historial.append("levantar")
 
 if __name__ == "__main__":
     main()
