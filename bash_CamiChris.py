@@ -18,7 +18,7 @@ from re import split
 	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
 def logTransferencias(status, mensaje):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/camidorego/Desktop/LOGS/shell_transferencias.log',
+	logging.basicConfig(filename='/home/chris/Desktop/LOGS/shell_transferencias.log',
 						filemode='w',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -47,7 +47,7 @@ def logErrores(mensaje):
 
 def logMovimientos(mensaje):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/camidorego/Desktop/LOGS/registro_movimientos.log',
+	logging.basicConfig(filename='/home/chris/Desktop/LOGS/registro_movimientos.log',
 						filemode='w',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -582,7 +582,7 @@ def cmdAddUser():
 	nombre = input("Nombre de usuario: ")
 	#contrasena = input("Ingrese la contrasena: ")
 	ip = input("Ingrese su ip: ")
-	ip = isIPv4(ip)
+	#ip = isIPv4(ip)
 	while ip == False:
 		ip = input("Ingrese su ip: ")
 		ip = isIPv4(ip)
@@ -600,18 +600,18 @@ def cmdAddUser():
 	mensaje = nombre + " " + ip + " " + horario_de_entrada + " " + horario_de_salida
 	print(mensaje)	
 	try:
-		string = "\n" + nombre + ":x:" + id + ":" + id + ":" + nombre + ":/home/" + nombre + ":/bin/bash"
-		archivo = open("/etc/passwd", "w") 
+		string = nombre + ":x:" + id + ":" + id + ":" + nombre + ":/home/" + nombre + ":/bin/sh" + "\n"
+		archivo = open("/etc/passwd", "a") 
 		archivo.writelines(string) #Se agrega el nuevo usuario en la ruta /etc/passwd
 		archivo.close()
-		string2 = "\n" + nombre +":x:" + id +":"
-		archivo2 = open("/etc/group", "w")
+		string2 = nombre +":x:" + id +":" + "\n"
+		archivo2 = open("/etc/group", "a")
 		archivo2.writelines(string2) #Se le asigna un grupo al nuevo usuario en la ruta /etc/group
 		archivo2.close()
-		subprocess.run("passwd", nombre)
 		cmdCrearDir("/home/"+nombre) #Se crea un directorio home para el nuevo usuario
-		cmdCopiar("/etc/skel/.bash*" +"  "+ "/home/" + nombre) #Se copia la ruta /etc/skel/.bash* al directorio home 
+		cmdCopiar("/etc/skel/.bash*" + " " + "/home/" + nombre) #Se copia la ruta /etc/skel/.bash* al directorio home
 		logRegistroDiario(mensaje)
+		subprocess.run("passwd", nombre)
 
 	except:
 		mensaje = "Error al agregar usuario"
