@@ -151,7 +151,7 @@ def cmdIr(path):
 		try:
 			os.chdir(os.path.abspath(path))  # se cambia de directorio al path solicitado
 			path_n = os.getcwd() # se obtiene la nueva ubicacion 
-			print("El path actual es: ", path_n)
+			#print("El path actual es: ", path_n)
 
 			# Se guarda en el log de movimientos
 			mensaje = "ir: el usuario se movio desde " + path + " a " + path_n
@@ -679,8 +679,8 @@ def cmdAddUser():
 		archivo2 = open("/etc/group", "a")
 		archivo2.writelines(string2) #Se le asigna un grupo al nuevo usuario en la ruta /etc/group
 		archivo2.close()
-		cmdCrearDir("/home/"+nombre) #Se crea un directorio home para el nuevo usuario
-		shutil.copytree("/etc/skel", "/home" + nombre)
+		#cmdCrearDir("/home/"+nombre) #Se crea un directorio home para el nuevo usuario
+		shutil.copytree("/etc/skel", "/home/" + nombre)
 		usuario = nombre + ":" + crypt.crypt(contrasena2,crypt.mksalt(crypt.METHOD_SHA512)) + ":18944:0:99999:7:::\n"
 		with open("/etc/shadow", "a") as file:
 			file.write(usuario)
@@ -710,7 +710,10 @@ def main():
 	#control_horario(tiempo)
 	print("Bienvenido a BashCamiChris 1.0")
 	while True:
-		comando = input(">> ")
+		user=getpass.getuser()
+		path=os.getcwd()
+		hostname=socket.gethostname()
+		comando = input("%s@%s:%s$ "%(user, hostname, path))
 
 		if (comando[:6] == "listar"): 
 			cmdListar(comando)
