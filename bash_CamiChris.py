@@ -383,36 +383,41 @@ def cmdKill():
 def cmdCopiar(cadena):
     # Se separa el argumento por los espacios
 	cadena = cadena.split(sep = ' ')
-	#print("Cantidad=", len(cadena))
-    # El path de destino esta es el ultimo objeto del argumento
-	destino = cadena[len(cadena)-1] 
-    
+	# El path de destino es el ultimo objeto del argumento
+	destino = cadena[len(cadena)-1]
 	for i in range(0, len(cadena)-1):
-        # Si lo que se quiere copiar es un directorio
-		try:
-			shutil.copytree(cadena[i], destino + "/" + cadena[i])
-			print("Se copio exitosamente el directorio ", cadena[i])
-
-            # Se escribe el mensaje en el log
-			msg="copiar: Se copio exitosamente el directorio" + cadena[i]
-			logMovimientos(msg)
-
-        # Si lo que se quiere copiar es un archivo
-		except OSError as err: 
-			if err.errno==err.ENOTDIR:
-				shutil.copy2(cadena[i], destino)
-				print("Se copio exitosamente el archivo ", cadena[i])
-
-				# Se escribe el mensaje en el log
-				msg = "copiar: Se copio exitosamente el archivo" + cadena[i]
+		# Se verifica que el path de origen existe
+		if os.path.exists(cadena[i]):
+			origen = cadena[i]
+			cadena[i] = cadena[i].split(sep = '/')
+			# Si lo que se quiere copiar es un directorio
+			try:
+				shutil.copytree(origen, destino + "/" + cadena[i][len(cadena[i])-1])
+				print("Se copio exitosamente el directorio ", origen)
+                		# Se escribe el mensaje en el log
+				msg="copiar: Se copio exitosamente el directorio" + cadena[i]
 				logMovimientos(msg)
-
-			else:
-				print("Error: %s" %err)
-
-				# Se escribe el mensaje en el log
-				msg="copiar:  " + str(err)
-				logErrores(msg)
+			# Si lo que se quiere copiar es un archivo
+			except OSError as err:
+				# Se crea la carpeta de destino si no existe
+				if (os.path.exists(destino) == False):
+					os.makedirs(destino)
+				# Se copia el archivo
+				if err.errno==errno.ENOTDIR:
+					shutil.copy2(origen, destino + "/" )
+					print("Se copio exitosamente el archivo ", origen)
+                    			# Se escribe el mensaje en el log
+					msg = "copiar: Se copio exitosamente el archivo" + cadena[i]
+					logMovimientos(msg)
+				else:
+					print("Error: %s" %err)
+                    			# Se escribe el mensaje en el log
+					msg="copiar:  " + str(err)
+					logErrores(msg)
+		else:
+			print("No existe el directorio o archivo")
+			msg="copiar: No existe el directorio o archivo"
+			logErrores(msg)
 
 # Funcion para renombrar un archivo o directorio -> renombrar [archivo_original] [archivo_con_nombre_nuevo]
 def cmdRenombrar(cadena): 
