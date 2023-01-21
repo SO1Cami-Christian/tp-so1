@@ -20,7 +20,7 @@ from hmac import compare_digest as compare_hash
 #registroUsuarios : 2023-01-10 16:01:41,269 : root 192.168.100.78 08:00 12:00
 # ---LOGS--- #
 	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
-def logTransferencias(status, mensaje3):
+def logTransferencias(status, message):
 	#creamos/llamamos al log
         log = logging.getLogger('transferencias')
         log.setLevel(logging.INFO)
@@ -41,7 +41,7 @@ def logTransferencias(status, mensaje3):
 
 	
 
-def logErrores(mensaje2):
+def logErrores(message):
 	# Configuramos el logger
 	#creamos/llamamos al log
         log = logging.getLogger('systemError')
@@ -61,7 +61,7 @@ def logErrores(mensaje2):
         fileHandler.flush()
         fileHandler.close()
 
-def logMovimientos(mensaje1):
+def logMovimientos(message):
 	#creamos/llamamos al log
         log = logging.getLogger('movimientos')
         log.setLevel(logging.INFO)
@@ -80,7 +80,7 @@ def logMovimientos(mensaje1):
         fileHandler.flush()
         fileHandler.close()
 
-def logRegistroUsuarios(mensaje4):
+def logRegistroUsuarios(message):
 	#creamos/llamamos al log
         log = logging.getLogger('registroUsuarios')
         log.setLevel(logging.INFO)
@@ -99,7 +99,7 @@ def logRegistroUsuarios(mensaje4):
         fileHandler.flush()
         fileHandler.close()
     
-def logusuarioHorarios(mensaje5):
+def logusuarioHorarios(message):
 	#creamos/llamamos al log
         log = logging.getLogger('usuariosHorarios')
         log.setLevel(logging.INFO)
@@ -118,7 +118,7 @@ def logusuarioHorarios(mensaje5):
         fileHandler.flush()
         fileHandler.close()
 
-def logRegistroDiario(mensaje6):
+def logRegistroDiario(message):
 	#creamos/llamamos al log
         log = logging.getLogger('registroDiario')
         log.setLevel(logging.INFO)
