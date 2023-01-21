@@ -534,7 +534,7 @@ def cmdTransferencia():
 		print("Ocurrio un error")
 
 		# Se informa en el log
-		mensaje = "FTP ERROR: " + archivo
+		mensaje = "FTP ERROR: error al subir/descargar archivo"
 		status = 0
 		logTransferencias(status, mensaje)
 
