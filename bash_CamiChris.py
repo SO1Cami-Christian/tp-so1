@@ -933,7 +933,7 @@ def main():
 			break
 
 		elif (comando[:8] == "permisos"):
-			cmdPermisos(comando[:9])
+			cmdPermisos(comando[9:])
 			historial.append("permisos")
 			
 		elif (comando[:7] == "historial"):
