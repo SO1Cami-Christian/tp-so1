@@ -844,12 +844,12 @@ def levantar_demonios():
 		logErrores(mensaje)
 
 def cmdAyuda():
-	print("listar [path]: Se listan los archivos en path \n listar: se listan los archivos en el path actual \n ir [path_del_directorio]: nos movemos al directorio especificado \n")
-	print("copiar [nombre de archivos/directorios] [path de destino]: se copian los archivos/directorios en el destino \n mover [nombre de los archivos/directorios] [path de destino]: Se mueven los archivos/directorios al destino \n")
-	print("renombrar [nombre original] [nuevo nombre]: Se renombra el archivo o directorio \n creardir [path del directorio]: Se crea un nuevo directorio \n pwd: se imprime el path actual\n ")
-	print("kill: Comando para terminar un proceso \n adduser: comando para agregar un nuevo usuario \n transfer: comando para subir/descargar un archivo de un servidor FTP \n password: comando para cambiar la contrasena de un usuario\n")
-	print("permisos [permisos en octal] [archivo]: se cambian los permisos del archivo \n historial: se muestra el historial de comandos \n buscar [palabra] [archivo]: se busca la palabra dentro del archivo \n getip: Se muestra la direccion IP del usuario actual\n")
-	print("propietario [directorio] []: Se cambia el propietario del directorio \n levantar: se levanta un demonio \n ejecutar [otro_comando]: Se ejecuta el otro comando \n salir: se sale de la shell")
+	print("listar [path]: Se listan los archivos en path \nlistar: se listan los archivos en el path actual \nir [path_del_directorio]: nos movemos al directorio especificado")
+	print("copiar [nombre de archivos/directorios] [path de destino]: se copian los archivos/directorios en el destino \nmover [nombre de los archivos/directorios] [path de destino]: Se mueven los archivos/directorios al destino")
+	print("renombrar [nombre original] [nuevo nombre]: Se renombra el archivo o directorio \ncreardir [path del directorio]: Se crea un nuevo directorio \npwd: se imprime el path actual")
+	print("kill: Comando para terminar un proceso \nadduser: comando para agregar un nuevo usuario \ntransfer: comando para subir/descargar un archivo de un servidor FTP \npassword: comando para cambiar la contrasena de un usuario")
+	print("permisos [permisos en octal] [archivo]: se cambian los permisos del archivo \nhistorial: se muestra el historial de comandos \nbuscar [palabra] [archivo]: se busca la palabra dentro del archivo \ngetip: Se muestra la direccion IP del usuario actual")
+	print("propietario [directorio] []: Se cambia el propietario del directorio \nlevantar: se levanta un demonio \nejecutar [otro_comando]: Se ejecuta el otro comando \n salir: se sale de la shell")
 
 
 
