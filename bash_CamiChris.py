@@ -144,7 +144,6 @@ def validar_horario(hora):
     try:
         datetime.datetime.strptime(hora,'%H:%M')
     except Exception :
-        print("adduser: respete el formato del la hora")
         return False
     else:
         return True
@@ -582,7 +581,7 @@ def cmdTransferencia():
 		ftp_server.quit() # se cierra la conexion
 
 		# Se guarda en el log de errores
-		mensaje2 = "transferencia: error en la transferencia del archivo " + archivo
+		mensaje2 = "transferencia: error en la transferencia del archivo " 
 		logErrores(mensaje2)
 def cmdKill():
 	# el usuario elije el pid del proceso que quiere terminar
@@ -933,15 +932,25 @@ def cmdAddUser():
 		#logErrores(mensaje)
 
 	
+def demonio(args):
+    # Argument verifications
+    args = args.split(sep = " ")
+    if len(args) > 3:
+        print("demonio: Too many arguments")
+        ##sysError_logger.error("contrasenha: Too many arguments")
+    elif len(args) < 2:
+        print("demonio: Missing arguments")
+        ##sysError_logger.error("demonio: Missing arguments")
+    else:
+        if(args[0]=='levantar'):
+            try:
+                subprocess.Popen("python3 "+args[1], shell=True)
+                ##userCommands('demonio '+args[0]+' '+args[1])
+            except Exception as e:
+                print(e)
+                #sysError_logger.error(e)
+                print('Demonio: Non valid argument.')
 
-def levantar_demonios():
-	try:
-		os.fork()
-		mensaje = "levantar: se levanto un proceso con pid" + str(os.fork())
-		logMovimientos(mensaje)
-	except:
-		mensaje = "levantar: error al levantar demonio"
-		logErrores(mensaje)
 
 def cmdAyuda():
 	print("listar [path]: Se listan los archivos en path \nlistar: se listan los archivos en el path actual \nir [path_del_directorio]: nos movemos al directorio especificado")
@@ -1040,8 +1049,8 @@ def main():
 			login()
 			historial.append(comando)
 		
-		elif(comando == "levantar"):
-			levantar_demonios()
+		elif(comando[:8] == "levantar"):
+			demonio(comando)
 			historial.append(comando)
 
 		elif(comando=="ayuda" ):
