@@ -254,7 +254,67 @@ def cmdEjecutar(cadena):
 		# Se guarda en el log de errores
 		mensaje = "ejecutar: comando no encontrado" + cadena
 		logErrores(mensaje)
+#Funcion para validar el formato de la hora		
+def validar_horario(hora):
+    try:
+        datetime.datetime.strptime(hora,'%H:%M')
+    except Exception :
+        print("adduser: respete el formato del la hora")
+        return False
+    else:
+        return True
+#Funcion para validar el user id del usuario
+def validar_uid(uid):
+	existeuid=0
+	with open("/etc/passwd") as file: #Se verifica que el usuario este en la carpeta de usuarios
+		for line in file:
+			if uid in line: #Se obtiene la linea donde se encuentra la informacion del usuario
+				existeuid = 1
+	return existeuid
+#Funcion que valida el group id	
+def validar_gid(gid):
+	existegid = 0
+	with open("/etc/group") as file:
+		for line in file:
+			if gid in line: #Se obtiene la linea donde se encuentra la informacion del usuario
+				existegid = 1
+	return existegid
 
+#Funcion para buscar una cadena dentro de un archivo  -> buscar "cadena a buscar"
+def cmdPropietario(cadena):  #Funcion para cambiar de propietarios  Formato USUARIO:GRUPO
+	cadena = cadena.split(sep=' ') #se separa la cadena
+	path = cadena[0]
+	ids = cadena[1]
+	ids = ids.split(sep=':')
+	uid = ids[0]
+	gid = ids[1]
+	print(path)
+	print(uid)
+	print(gid)
+	existeuid = validar_uid(uid)
+	existegid = validar_gid(gid)
+	
+	try:
+		if(existeuid ==1 and existegid ==1):	
+			uid = int(uid)
+			gid = int(gid)				
+			os.chown(path, uid, gid)
+			print("Se cambio de propietario exitosamente")
+			mensaje = "propietario: se cambio de propietario " + path
+									#logMovimientos(mensaje)
+								
+		if existeuid != 1:
+			mensaje = "propietario: no existe el uid " + uid
+			print(mensaje)
+			#logErrores(mensaje)
+		if existegid != 1:
+			mensaje = "propietario: no existe el gid " + gid
+			print(mensaje)
+		
+	except:
+		mensaje = "propietario: error al cambiar propietario"
+		#logErrores(mensaje)
+		
 #Funcion para buscar una cadena dentro de un archivo  -> buscar "cadena a buscar"
 def cmdBuscar(cadena):
 	cadena = cadena.split(sep=' ')
@@ -278,18 +338,35 @@ def cmdBuscar(cadena):
 					# Se guarda en el log de movimientos
 					mensaje = "buscar: se encontro la cadena en el archivo"
 					existe =1  
+<<<<<<< HEAD
 					logMovimientos(mensaje)
+=======
+					#logMovimientos(mensaje)
+>>>>>>> refs/remotes/origin/main
 	else:
 		print("No existe el archivo.")
 		# Se guarda en el log de errores
 		mensaje = "buscar: No existe el archivo."
+<<<<<<< HEAD
 		logErrores(mensaje)			
+=======
+		#logErrores(mensaje)			
+>>>>>>> refs/remotes/origin/main
 
 	if existe == 0:
 		print("La cadena no existe en el archivo.")
 	# Se guarda en el log de errores
 		mensaje = "buscar: La cadena no existe en el archivo."
+<<<<<<< HEAD
 		logErrores(mensaje)
+=======
+		#logErrores(mensaje)
+
+			# Se guarda en el log de movimientos
+		mensaje = "buscar: no se encontro la cadena en el archivo"  
+		#logMovimientos(mensaje)
+
+>>>>>>> refs/remotes/origin/main
 
 			# Se guarda en el log de movimientos
 		mensaje = "buscar: no se encontro la cadena en el archivo"  
@@ -614,6 +691,7 @@ def control_horario(tiempo):
 	hora = hora.split(":")
 	hora = hora[0] + "." + hora[1]
 	hora = float(hora)
+<<<<<<< HEAD
 	# Se obtiene el usuario
 	usuario = getpass.getuser() 
 	print("Hora de inicio: ",hora)
@@ -621,12 +699,62 @@ def control_horario(tiempo):
 	try: 
 		#Se verifica que el usuario este en la carpeta de usuarios
 		with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file: 
+=======
+	usuario = getpass.getuser() # Se obtiene el usuario
+	linea = []
+	try: 
+		with open("/home/chris/Desktop/tp-so1/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
+>>>>>>> refs/remotes/origin/main
 			for line in file:
 				#Se obtiene la linea donde se encuentra la informacion del usuario
 				if usuario in line: 
 					linea.append(line)
+			linea = str(linea) 
+		linea = linea.split(sep = " ") # Se quitan los datos de la cadena donde se encuentra la informacion del usuario
+		horaInicio = linea[7]
+		horaInicio = horaInicio.split(sep = ":")
+		horaInicio = horaInicio[0] + "." + horaInicio[1]
+		horaInicio = float(horaInicio)
+		horaSalida = linea[8]
+		horaSalida = horaSalida.split(sep = ":")
+		horaSalida = horaSalida[0] + "." + horaSalida[1]
+		horaSalida = float(horaSalida[:5])
+		ip_oficial = linea[6]
+		ip_actual = getIp(0)
+
+		if tiempo==0 :
+			if hora < horaInicio or hora > horaSalida: # Se verifica y registra el horario de inicio de sesion
+				mensaje = usuario + " inicio sesion fuera del rango del rango horario"
+				print(mensaje)
+				#logusuarioHorarios(mensaje)
+			else:
+				mensaje = usuario +" :inicio sesion dentro del rango horario"
+				print(mensaje)
+				#logRegistroDiario(mensaje)
+
+			if ip_oficial != ip_actual:
+				mensaje = "La ip no esta habilitada, ip: " + ip_actual
+				print(mensaje)
+				#logRegistroDiario(mensaje)
+
+			else: 
+				mensaje = "Inicio sesion con la ip habilitada" + ip_actual
+				print(mensaje)
+				#logRegistroDiario(mensaje)
+
+		if tiempo==1 :
+			if hora < horaInicio or hora > horaSalida: #Se verifica y registra el horario de cierre de sesion
+				mensaje = usuario + " cerro sesion fuera del rango horario"
+				print(mensaje)
+				#logusuarioHorarios(mensaje)
+			else:
+				mensaje = usuario + " :cerro sesion dentro del rango horario"
+				print(mensaje)
+				#logRegistroDiario(mensaje)
+
 	except:
 		print("error")
+<<<<<<< HEAD
 	linea = str(linea) 
 	# Se quitan los datos de la cadena donde se encuentra la informacion del usuario
 	linea = linea.split(sep = " ") 
@@ -666,15 +794,18 @@ def control_horario(tiempo):
 		logRegistroDiario(mensaje)
 
 	print(horario_inicio_oficial,horario_salida_oficial)
+=======
+>>>>>>> refs/remotes/origin/main
 
 #Funcion para cambiar de propietarios  Formato USUARIO:GRUPO
 def cmdPropietario(cadena):  
 	cadena = cadena.split(sep=' ') #se separa la cadena
 	path = cadena[0]
 	ids = cadena[1]
-	ids = ids.split(seo=':')
+	ids = ids.split(sep=':')
 	uid = ids[0]
 	gid = ids[1]
+<<<<<<< HEAD
 	if os.path.exists(path):
 		try:
 			with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
@@ -705,6 +836,36 @@ def cmdPropietario(cadena):
 
 #Funcion para obtener la ip del usuario
 def getIp(print_ip): 
+=======
+	print(path)
+	print(uid)
+	print(gid)
+	existeuid = validar_uid(uid)
+	existegid = validar_gid(gid)
+	
+	try:
+		if(existeuid ==1 and existegid ==1):	
+			uid = int(uid)
+			gid = int(gid)				
+			os.chown(path, uid, gid)
+			print("Se cambio de propietario exitosamente")
+			mensaje = "propietario: se cambio de propietario " + path
+									#logMovimientos(mensaje)
+								
+		if existeuid != 1:
+			mensaje = "propietario: no existe el uid " + uid
+			print(mensaje)
+			#logErrores(mensaje)
+		if existegid != 1:
+			mensaje = "propietario: no existe el gid " + gid
+			print(mensaje)
+		
+	except:
+		mensaje = "propietario: error al cambiar propietario"
+		#logErrores(mensaje)
+		
+def getIp(print_ip): #Funcion para obtener la ip del usuario
+>>>>>>> refs/remotes/origin/main
 ## getting the hostname by socket.gethostname() method
 	hostname = socket.gethostname()
 ## getting the IP address using socket.gethostbyname() method
@@ -718,6 +879,7 @@ def isIPv4(s):
          try: return str(int(s)) == s and 0 <= int(s) <= 255
          except: return False
 
+#Funcion para agregar usuario
 def cmdAddUser():
 	nombre = input("Nombre de usuario: ")
 	#contrasena = input("Ingrese la contrasena: ")
@@ -726,11 +888,8 @@ def cmdAddUser():
 		contrasena2 = getpass.getpass("vuelva a ingresar la contrasena: ")
 		if contrasena == contrasena2:
 			break
+	
 	ip = input("Ingrese su ip: ")
-	"""#ip = isIPv4(ip)
-	while ip == False:
-		ip = input("Ingrese su ip: ")
-		#ip = isIPv4(ip)"""
 	with open("/etc/passwd") as file: #Se accede al archivo donde se encuentran los usuarios
 		for line in file:
 			pass
@@ -740,8 +899,18 @@ def cmdAddUser():
 	id = int(idchar[1])
 	id = id +1 #Se le suma 1 a la id del usuario anterior para obtener una nueva id unica
 	id = str(id) 
-	horario_de_entrada = input("Ingrese horario entrada(formato 00:00): ")
-	horario_de_salida = input("Ingrese horario salida(formato 00:00): ")
+	while True:
+		horario_de_entrada = input("Ingrese horario entrada(formato 00:00): ")
+		if validar_horario(horario_de_entrada):
+			break
+		else:
+			print("respete el formato: 00:00")
+	while True:
+		horario_de_salida = input("Ingrese horario salida(formato 00:00): ")
+		if validar_horario(horario_de_salida):
+			break
+		else:
+			print("respete el formato: 00:00")
 	mensaje = nombre + " " + ip + " " + horario_de_entrada + " " + horario_de_salida
 	print(mensaje)
 	try:
@@ -753,7 +922,6 @@ def cmdAddUser():
 		archivo2 = open("/etc/group", "a")
 		archivo2.writelines(string2) #Se le asigna un grupo al nuevo usuario en la ruta /etc/group
 		archivo2.close()
-		#cmdCrearDir("/home/"+nombre) #Se crea un directorio home para el nuevo usuario
 		shutil.copytree("/etc/skel", "/home/" + nombre)
 		usuario = nombre + ":" + crypt.crypt(contrasena2,crypt.mksalt(crypt.METHOD_SHA512)) + ":18944:0:99999:7:::\n"
 		with open("/etc/shadow", "a") as file:
@@ -763,7 +931,9 @@ def cmdAddUser():
 
 	except:
 		mensaje = "Error al agregar usuario"
-		logErrores(mensaje)
+		print(mensaje)
+		#logErrores(mensaje)
+	
 
 def levantar_demonios():
 	try:
