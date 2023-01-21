@@ -22,7 +22,7 @@ from hmac import compare_digest as compare_hash
 	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
 def logTransferencias(status, mensaje):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/camidorego/Desktop/LOGS/shell_transferencias.log',
+	logging.basicConfig(filename='/var/log/shell/shell_transferencias.log',
 						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -37,9 +37,9 @@ def logTransferencias(status, mensaje):
 		# Transferencia con error
 		logger.info(mensaje)
 
-def logErrores(mensaje):
+def logErrores(mensaje2):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/camidorego/Desktop/LOGS/sistema_error.log',
+	logging.basicConfig(filename='/var/log/shell/sistema_error.log',
 						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -47,11 +47,11 @@ def logErrores(mensaje):
 	logger = logging.getLogger()
 
 	# Se escribe el mensaje de error
-	logger.info(mensaje)
+	logger.info(mensaje2)
 
-def logMovimientos(mensaje):
+def logMovimientos(mensaje1):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/camidorego/Desktop/LOGS/registro_movimientos.log',
+	logging.basicConfig(filename='/var/log/shell/registro_movimientos.log',
 						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -59,11 +59,11 @@ def logMovimientos(mensaje):
 	logger = logging.getLogger()
 
 	# Se escribe el mensaje 
-	logger.info(mensaje)
+	logger.info(mensaje1)
 
 def logRegistroUsuarios(mensaje):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/camidorego/Desktop/LOGS/registro_usuarios.log',
+	logging.basicConfig(filename='/var/log/shell/registro_usuarios.log',
 						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -75,7 +75,7 @@ def logRegistroUsuarios(mensaje):
     
 def logusuarioHorarios(mensaje):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/camidorego/Desktop/LOGS/usuario_horarios.log',
+	logging.basicConfig(filename='/var/log/shell/usuario_horarios.log',
 						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -87,7 +87,7 @@ def logusuarioHorarios(mensaje):
 
 def logRegistroDiario(mensaje):
 	# Configuramos el logger
-	logging.basicConfig(filename='/home/camidorego/Desktop/LOGS/registro_diario.log',
+	logging.basicConfig(filename='/var/log/shell/registro_diario.log',
 						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
@@ -138,7 +138,7 @@ def control_horario(tiempo):
 	usuario = getpass.getuser() # Se obtiene el usuario
 	linea = []
 	try: 
-		with open("/home/chris/Desktop/tp-so1/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
+		with open("/var/log/shell/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
 			for line in file:
 				#Se obtiene la linea donde se encuentra la informacion del usuario
 				if usuario in line: 
@@ -249,8 +249,8 @@ def cmdCrearDir(cadena):
 			print("se creo el directorio correctamente")
 
 			# Se guarda en el log de movimientos
-			mensaje = "creardir: se creo un directorio en " + cadena[i] 
-			logMovimientos(mensaje)
+			mensaje1 = "creardir: se creo un directorio en " + cadena[i] 
+			logMovimientos(mensaje1)
 
 		# no se puede crear porque ya existe una carpeta con el mismo nombre	
 		except FileExistsError:
@@ -272,8 +272,8 @@ def cmdIr(path):
 			#print("El path actual es: ", path_n)
 
 			# Se guarda en el log de movimientos
-			mensaje = "ir: el usuario se movio desde " + path_n + " a " + path
-			logMovimientos(mensaje)
+			mensaje1 = "ir: el usuario se movio desde " + path_n + " a " + path
+			logMovimientos(mensaje1)
 		except Exception:
 			print("Error al cambiar de directorio")
 
@@ -285,8 +285,8 @@ def cmdIr(path):
 		print("El path introducido es incorrecto")
 
 		# Se guarda en el log de errores
-		mensaje = "ir: El path ingresado es incorrecto"
-		logErrores(mensaje)
+		mensaje2 = "ir: El path ingresado es incorrecto"
+		logErrores(mensaje2)
 
 #Funcion para obtener el path del directorio actual -> pwd
 def cmdPwd():
@@ -296,8 +296,8 @@ def cmdPwd():
 	print("El path actual es: ", path) 
 
 	# Se guarda en el log de movimientos
-	mensaje = "pwd: se mostro " + path 
-	logMovimientos(mensaje)
+	mensaje1 = "pwd: se mostro " + path 
+	logMovimientos(mensaje1)
 
 #Funcion para cambiar los permisos de un directorio -> permisos [permisos en Octal] [path]
 def cmdPermisos(cadena):
@@ -315,14 +315,14 @@ def cmdPermisos(cadena):
 			print("Los permisos del archivo son (en octal): ", oct(status.st_mode))
 
 			# Se guarda en el log de movimientos
-			mensaje = "permisos: se cambiaron los permisos de " + str(path_r) 
-			logMovimientos(mensaje)
+			mensaje1 = "permisos: se cambiaron los permisos de " + str(path_r) 
+			logMovimientos(mensaje1)
 		except Exception:
 			print("Error al cambiar los permisos")
 
 			# Se guarda en el log de errores
-			mensaje1 = "permisos: Error al cambiar los permisos"
-			logErrores(mensaje1)
+			mensaje2 = "permisos: Error al cambiar los permisos"
+			logErrores(mensaje2)
 	else:
 		print("El path introducido es incorrecto")
 
