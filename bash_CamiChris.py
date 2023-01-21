@@ -20,7 +20,7 @@ from hmac import compare_digest as compare_hash
 #registroUsuarios : 2023-01-10 16:01:41,269 : root 192.168.100.78 08:00 12:00
 # ---LOGS--- #
 	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
-def logTransferencias(status, mensaje):
+def logTransferencias(status, mensaje3):
 	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/shell_transferencias.log',
 						filemode='a',
@@ -32,7 +32,7 @@ def logTransferencias(status, mensaje):
 
 	if status==1:
 		# Transferencia exitosa
-		logger.info(mensaje) 
+		logger.info(mensaje3) 
 	elif status == 0:
 		# Transferencia con error
 		logger.info(mensaje)
@@ -61,7 +61,7 @@ def logMovimientos(mensaje1):
 	# Se escribe el mensaje 
 	logger.info(mensaje1)
 
-def logRegistroUsuarios(mensaje):
+def logRegistroUsuarios(mensaje4):
 	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/registro_usuarios.log',
 						filemode='a',
@@ -71,9 +71,9 @@ def logRegistroUsuarios(mensaje):
 	logger = logging.getLogger()
 
 	# Se escribe el mensaje 
-	logger.info(mensaje)
+	logger.info(mensaje4)
     
-def logusuarioHorarios(mensaje):
+def logusuarioHorarios(mensaje5):
 	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/usuario_horarios.log',
 						filemode='a',
@@ -83,9 +83,9 @@ def logusuarioHorarios(mensaje):
 	logger = logging.getLogger()
 
 	# Se escribe el mensaje 
-	logger.info(mensaje)
+	logger.info(mensaje5)
 
-def logRegistroDiario(mensaje):
+def logRegistroDiario(mensaje6):
 	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/registro_diario.log',
 						filemode='a',
@@ -95,7 +95,7 @@ def logRegistroDiario(mensaje):
 	logger = logging.getLogger()
 
 	# Se escribe el mensaje 
-	logger.info(mensaje)
+	logger.info(mensaje6)
 
 ## VERIFICACIONES
 	
@@ -509,9 +509,9 @@ def cmdTransferencia():
 				print("Se descargo el archivo exitosamente")
 
 				# Se informa en el log
-				mensaje = "FTP DOWNLOAD: " + archivo
+				mensaje3 = "FTP DOWNLOAD: " + archivo
 				status = 1
-				logTransferencias(status, mensaje)
+				logTransferencias(status, mensaje3)
 
 				# se cierra la conexion
 				ftp_server.quit()
@@ -534,9 +534,9 @@ def cmdTransferencia():
 		print("Ocurrio un error")
 
 		# Se informa en el log
-		mensaje = "FTP ERROR: error al subir/descargar archivo"
+		mensaje3 = "FTP ERROR: error al subir/descargar archivo"
 		status = 0
-		logTransferencias(status, mensaje)
+		logTransferencias(status, mensaje3)
 
 		# se cierra la conexion
 		ftp_server.quit() # se cierra la conexion
