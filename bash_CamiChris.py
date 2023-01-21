@@ -243,6 +243,8 @@ def cmdHistory(comandos):
 #Funcion para ejecutar otros comandos de linux
 def cmdEjecutar(cadena):
 	try:
+		if cadena=="exit":
+			control_horario(1) 
 		subprocess.run(cadena.split())
 
 		# Se guarda en el log de movimientos
