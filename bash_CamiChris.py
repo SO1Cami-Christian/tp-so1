@@ -21,81 +21,121 @@ from hmac import compare_digest as compare_hash
 # ---LOGS--- #
 	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
 def logTransferencias(status, mensaje3):
-	# Configuramos el logger
-	logging.basicConfig(filename='/var/log/shell/shell_transferencias.log',
-						filemode='a',
-						level=logging.INFO,
-						format='%(asctime)s %(message)s')
+	#creamos/llamamos al log
+        log = logging.getLogger('transferencias')
+        log.setLevel(logging.INFO)
+        #creamos el archivo donde se van a almacenar los registros
+        fileHandler = logging.FileHandler('/var/log/shell/shell_transferencias.log')
+        fileHandler.setLevel(logging.DEBUG)
+        #le damos el formato deseado
+        formato = logging.Formatter('%(asctime)s : %(message)s')
+        fileHandler.setFormatter(formato)
+        #agregamos al log
+        log.addHandler(fileHandler)
+        #establecemos el mensaje
+        log.info(message)
+        #cerramos el log
+        log.removeHandler(fileHandler)
+        fileHandler.flush()
+        fileHandler.close()
 
-	# Creamos el objeto logger
-	logger = logging.getLogger()
-
-	if status==1:
-		# Transferencia exitosa
-		logger.info(mensaje3) 
-	elif status == 0:
-		# Transferencia con error
-		logger.info(mensaje)
+	
 
 def logErrores(mensaje2):
 	# Configuramos el logger
-	logging.basicConfig(filename='/var/log/shell/sistema_error.log',
-						filemode='a',
-						level=logging.INFO,
-						format='%(asctime)s %(message)s')
-	# Creamos el objeto logger
-	logger = logging.getLogger()
-
-	# Se escribe el mensaje de error
-	logger.info(mensaje2)
+	#creamos/llamamos al log
+        log = logging.getLogger('systemError')
+        log.setLevel(logging.INFO)
+        #creamos el archivo donde se van a almacenar los registros
+        fileHandler = logging.FileHandler('/var/log/shell/sistema_error.log')
+        fileHandler.setLevel(logging.ERROR)
+        #le damos el formato deseado
+        formato = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
+        fileHandler.setFormatter(formato)
+        #agregamos al log
+        log.addHandler(fileHandler)
+        #establecemos el mensaje
+        log.info(message)
+        #cerramos el log
+        log.removeHandler(fileHandler)
+        fileHandler.flush()
+        fileHandler.close()
 
 def logMovimientos(mensaje1):
-	# Configuramos el logger
-	logging.basicConfig(filename='/var/log/shell/registro_movimientos.log',
-						filemode='a',
-						level=logging.INFO,
-						format='%(asctime)s %(message)s')
-	# Creamos el objeto logger
-	logger = logging.getLogger()
-
-	# Se escribe el mensaje 
-	logger.info(mensaje1)
+	#creamos/llamamos al log
+        log = logging.getLogger('movimientos')
+        log.setLevel(logging.INFO)
+        #creamos el archivo donde se van a almacenar los registros
+        fileHandler = logging.FileHandler('/var/log/shell/registro_movimientos.log')
+        fileHandler.setLevel(logging.DEBUG)
+        #le damos el formato deseado
+        formato = logging.Formatter('%(asctime)s : %(message)s')
+        fileHandler.setFormatter(formato)
+        #agregamos al log
+        log.addHandler(fileHandler)
+        #establecemos el mensaje
+        log.info(message)
+        #cerramos el log
+        log.removeHandler(fileHandler)
+        fileHandler.flush()
+        fileHandler.close()
 
 def logRegistroUsuarios(mensaje4):
-	# Configuramos el logger
-	logging.basicConfig(filename='/var/log/shell/registro_usuarios.log',
-						filemode='a',
-						level=logging.INFO,
-						format='%(asctime)s %(message)s')
-	# Creamos el objeto logger
-	logger = logging.getLogger()
-
-	# Se escribe el mensaje 
-	logger.info(mensaje4)
+	#creamos/llamamos al log
+        log = logging.getLogger('registroUsuarios')
+        log.setLevel(logging.INFO)
+        #creamos el archivo donde se van a almacenar los registros
+        fileHandler = logging.FileHandler('/var/log/shell/registro_usuarios.log')
+        fileHandler.setLevel(logging.DEBUG)
+        #le damos el formato deseado
+        formato = logging.Formatter('%(asctime)s : %(message)s')
+        fileHandler.setFormatter(formato)
+        #agregamos al log
+        log.addHandler(fileHandler)
+        #establecemos el mensaje
+        log.info(message)
+        #cerramos el log
+        log.removeHandler(fileHandler)
+        fileHandler.flush()
+        fileHandler.close()
     
 def logusuarioHorarios(mensaje5):
-	# Configuramos el logger
-	logging.basicConfig(filename='/var/log/shell/usuario_horarios.log',
-						filemode='a',
-						level=logging.INFO,
-						format='%(asctime)s %(message)s')
-	# Creamos el objeto logger
-	logger = logging.getLogger()
-
-	# Se escribe el mensaje 
-	logger.info(mensaje5)
+	#creamos/llamamos al log
+        log = logging.getLogger('usuariosHorarios')
+        log.setLevel(logging.INFO)
+        #creamos el archivo donde se van a almacenar los registros
+        fileHandler = logging.FileHandler('/var/log/shell/usuarios_horarios.log')
+        fileHandler.setLevel(logging.DEBUG)
+        #le damos el formato deseado
+        formato = logging.Formatter('%(asctime)s : %(message)s')
+        fileHandler.setFormatter(formato)
+        #agregamos al log
+        log.addHandler(fileHandler)
+        #establecemos el mensaje
+        log.info(message)
+        #cerramos el log
+        log.removeHandler(fileHandler)
+        fileHandler.flush()
+        fileHandler.close()
 
 def logRegistroDiario(mensaje6):
-	# Configuramos el logger
-	logging.basicConfig(filename='/var/log/shell/registro_diario.log',
-						filemode='a',
-						level=logging.INFO,
-						format='%(asctime)s %(message)s')
-	# Creamos el objeto logger
-	logger = logging.getLogger()
-
-	# Se escribe el mensaje 
-	logger.info(mensaje6)
+	#creamos/llamamos al log
+        log = logging.getLogger('registroDiario')
+        log.setLevel(logging.INFO)
+        #creamos el archivo donde se van a almacenar los registros
+        fileHandler = logging.FileHandler('/var/log/shell/registro_diario.log')
+        fileHandler.setLevel(logging.DEBUG)
+        #le damos el formato deseado
+        formato = logging.Formatter('%(asctime)s : %(message)s')
+        fileHandler.setFormatter(formato)
+        #agregamos al log
+        log.addHandler(fileHandler)
+        #establecemos el mensaje
+        log.info(message)
+        #cerramos el log
+        log.removeHandler(fileHandler)
+        fileHandler.flush()
+        fileHandler.close()
 
 ## VERIFICACIONES
 	
