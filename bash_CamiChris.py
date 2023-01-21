@@ -1,5 +1,4 @@
 import warnings
-import platform
 import subprocess
 import os
 import time
@@ -24,7 +23,7 @@ from hmac import compare_digest as compare_hash
 def logTransferencias(status, mensaje):
 	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/shell_transferencias.log',
-						filemode='w',
+						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
 
@@ -41,7 +40,7 @@ def logTransferencias(status, mensaje):
 def logErrores(mensaje):
 	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/sistema_error.log',
-						filemode='w',
+						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
 	# Creamos el objeto logger
@@ -53,7 +52,7 @@ def logErrores(mensaje):
 def logMovimientos(mensaje):
 	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/registro_movimientos.log',
-						filemode='w',
+						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
 	# Creamos el objeto logger
@@ -63,8 +62,9 @@ def logMovimientos(mensaje):
 	logger.info(mensaje)
 
 def logRegistroUsuarios(mensaje):
+	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/registro_usuarios.log',
-						filemode='w',
+						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
 	# Creamos el objeto logger
@@ -74,8 +74,9 @@ def logRegistroUsuarios(mensaje):
 	logger.info(mensaje)
     
 def logusuarioHorarios(mensaje):
+	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/usuario_horarios.log',
-						filemode='w',
+						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
 	# Creamos el objeto logger
@@ -85,8 +86,9 @@ def logusuarioHorarios(mensaje):
 	logger.info(mensaje)
 
 def logRegistroDiario(mensaje):
+	# Configuramos el logger
 	logging.basicConfig(filename='/var/log/shell/registro_diario.log',
-						filemode='w',
+						filemode='a',
 						level=logging.INFO,
 						format='%(asctime)s %(message)s')
 	# Creamos el objeto logger
@@ -100,20 +102,30 @@ def logRegistroDiario(mensaje):
 
 #Funcion para listar un directorio -> listar o listar [path]
 def cmdListar(cadena):
-	if(len(cadena) == 6): # se listan los archivos del path actual
-		path = os.getcwd() # se obtiene el path actual
-		lista = os.listdir(path) # se obtienen los archivos
+	# se listan los archivos del path actual
+	if(len(cadena) == 6): 
+		# se obtiene el path actual
+		path = os.getcwd() 
+		# se obtienen los archivos
+		lista = os.listdir(path) 
+		# se muestran los archivos
 		print("Archivos en ", path, ":")
 		print(lista)
 
 		# Se guarda en el log de movimientos
 		mensaje = "listar: se listaron los archivos de " + path 
 		logMovimientos(mensaje)
+
+	# se listan los archivos del path especificado
 	else:
 		cadena = cadena.split(sep=' ')
-		path = cadena[1] # se guarda el path introducido
+		# se guarda el path introducido
+		path = cadena[1] 
+		# se verifica que el path introducido existe
 		if os.path.exists(path):
-			lista = os.listdir(path) # se obtienen los archivos
+			# se obtienen los archivos
+			lista = os.listdir(path) 
+			# se muestran los archivos
 			print("Archivos en ", path, ":")
 			print(lista)
 
@@ -132,29 +144,35 @@ def cmdCrearDir(cadena):
 	cadena=cadena.split(sep=' ')
 	for i in range(0, len(cadena)):
 		try:
-			os.mkdir(os.path.abspath(cadena[i])) # se crea el directorio
+			# se crea el directorio
+			os.mkdir(os.path.abspath(cadena[i])) 
 			print("se creo el directorio correctamente")
-		# Se guarda en el log de movimientos
+
+			# Se guarda en el log de movimientos
 			mensaje = "creardir: se creo un directorio en " + cadena[i] 
 			logMovimientos(mensaje)
+
+		# no se puede crear porque ya existe una carpeta con el mismo nombre	
 		except FileExistsError:
 			print("La carpeta ya existe")
 
-		# Se guarda en el log de errores
-		mensaje = "creardir: La carpeta ya existe"
-		logErrores(mensaje)
+			# Se guarda en el log de errores
+			mensaje = "creardir: La carpeta ya existe"
+			logErrores(mensaje)
 
 #Funcion para ir a un directorio -> ir [path]
 def cmdIr(path):
-	
-	if os.path.exists(path): # se verifica el path introducido
+	# se verifica el path introducido
+	if os.path.exists(path): 
 		try:
-			os.chdir(os.path.abspath(path))  # se cambia de directorio al path solicitado
-			path_n = os.getcwd() # se obtiene la nueva ubicacion 
+			# se cambia de directorio al path solicitado
+			path_n=os.getcwd()
+			os.chdir(os.path.abspath(path))  
+			#path_n = os.getcwd() # se obtiene la nueva ubicacion 
 			#print("El path actual es: ", path_n)
 
 			# Se guarda en el log de movimientos
-			mensaje = "ir: el usuario se movio desde " + path + " a " + path_n
+			mensaje = "ir: el usuario se movio desde " + path_n + " a " + path
 			logMovimientos(mensaje)
 		except:
 			print("Error al cambiar de directorio")
@@ -172,8 +190,10 @@ def cmdIr(path):
 
 #Funcion para obtener el path del directorio actual -> pwd
 def cmdPwd():
-	path = os.getcwd() # se obtiene el path actual
-	print("El path actual es: ", path) # se imprime
+	# se obtiene el path actual
+	path = os.getcwd() 
+	# se imprime
+	#print("El path actual es: ", path) 
 
 	# Se guarda en el log de movimientos
 	mensaje = "pwd: se mostro " + path 
@@ -185,9 +205,14 @@ def cmdPermisos(cadena):
 	permisos = cadena[0]
 	path = cadena[1]
 	
+	# se verifica que el path existe
 	if os.path.exists(path):
 		try:
+			# se cambian los permisos
 			os.chmod(os.path.abspath(path), permisos)
+			# se muestran los permisos actuales del archivo
+			status=os.stat(path)
+			print("Los permisos del archivo son (en octal): ", oct(status.st_mode))
 
 			# Se guarda en el log de movimientos
 			mensaje = "permisos: se cambiaron los permisos de " + path 
@@ -233,37 +258,47 @@ def cmdEjecutar(cadena):
 #Funcion para buscar una cadena dentro de un archivo  -> buscar "cadena a buscar"
 def cmdBuscar(cadena):
 	cadena = cadena.split(sep=' ')
-	path = cadena[0]
-	palabra = cadena[1]
+	path = cadena[len(cadena)-1]
+	palabra = cadena[0]
+	for i in range(1,len(cadena)-1):
+		palabra = palabra + " " + cadena[i]
+
+	print(palabra)
 
 	if(os.path.isfile(path)):
 		a = open(path,"r") # se abre el archivo
-		texto = a.read()  # se guarda el contenido en texto 
-
-		if palabra in texto: # se busca la cadena
-			print("La cadena existe en el archivo.")
-
-			# Se guarda en el log de movimientos
-			mensaje = "buscar: se encontro la cadena en el archivo"  
-			logMovimientos(mensaje)
-		else:
-			print("La cadena no existe en el archivo.")
-			# Se guarda en el log de errores
-			mensaje = "buscar: La cadena no existe en el archivo."
-			logErrores(mensaje)
-
-			# Se guarda en el log de movimientos
-			mensaje = "buscar: no se encontro la cadena en el archivo"  
-			logMovimientos(mensaje)
+		texto = a.read()  # se guarda el contenido en texto
+		contador = 0
+		existe = 0
+		with open(path) as file: #Se accede al archivo donde se encuentran los usuarios
+			for line in file:
+				contador = contador + 1
+				if palabra in line:
+					print("La cadena existe en el archivo: linea " + str(contador))
+					# Se guarda en el log de movimientos
+					mensaje = "buscar: se encontro la cadena en el archivo"
+					existe =1  
+					logMovimientos(mensaje)
 	else:
 		print("No existe el archivo.")
 		# Se guarda en el log de errores
 		mensaje = "buscar: No existe el archivo."
+		logErrores(mensaje)			
+
+	if existe == 0:
+		print("La cadena no existe en el archivo.")
+	# Se guarda en el log de errores
+		mensaje = "buscar: La cadena no existe en el archivo."
 		logErrores(mensaje)
+
+			# Se guarda en el log de movimientos
+		mensaje = "buscar: no se encontro la cadena en el archivo"  
+		logMovimientos(mensaje)
 
 #Funcion para transferir archivos via ftp
 def cmdTransferencia():
 	# se solicita la informacion necesaria -- VISITAR https://dlptest.com/ftp-test/ PARA INFO DE PRUEBA
+
 	hostname=input("Ingrese el host: ")
 	username=input("Ingrese le nombre de usuario: ")
 	password=input("Ingrese la contrasena: ")
@@ -281,11 +316,18 @@ def cmdTransferencia():
 	try:
 		while True:
 			# se le pregunta al usuario que desea hacer con el archivo
-			opcion=int(input("OPCIONES:\n 1)Subir archivo \n 2)Descargar archivo \n 3)Ver lista de archivos del servidor \n SELECCIONE UNA OPCION: "))
+			opcion=int(input("OPCIONES:\n 1)Subir archivo \n 2)Descargar archivo \n 3)Ver lista de archivos del servidor \n 4) Salir \n SELECCIONE UNA OPCION: "))
 			
 			if opcion==1: 
-				with open(archivo, "rb") as file: # el archivo se lee en binario
-					ftp_server.storbinary(f"STOR {archivo}", file) # se sube el archivo
+				# se solicita el nomnbre del archivo con su respectiva extension
+				archivo=input("Ingrese la el path del archivo: ")
+				# se lee el archivo en binario
+				fp=open(archivo, 'rb')
+				# se sube el archivo
+				ftp_server.storbinary('STOR %s' % os.path.basename(archivo), fp, 1024)
+				# se cierra el archivo
+				fp.close()
+
 				print("Se subio el archivo exitosamente")
 
 				# se listan los archivos del servidor
@@ -297,28 +339,26 @@ def cmdTransferencia():
 				status = 1
 				logTransferencias(status, mensaje)
 
-				# se cierra la conexion
-				ftp_server.quit()
-
 				# Se guarda en el log de movimientos
 				mensaje2 = "transferencia: se subio el archivo " + archivo
 				logMovimientos(mensaje2)
 
-				break
+				# se cierra la conexion
+				ftp_server.quit()
 
 			if opcion==2:
+				# se pide el nombre del archivo
+				archivo=input("Ingrese el nombre del archivo: ")
+				while True:
+					path=input("Ingresa el path donde se descargara el archivo: ")
+					if os.path.exists(path):
+						break
+					else:
+						print("El path ingresado no es valido, vuelva a ingresar")
+				path_descarga=os.path.abspath(path+"/"+archivo)
 				with open(archivo, "wb") as file: # el archivo se escribe en binario
-					ftp_server.retrbinary(f"RETR {archivo}", file.write) # se descarga el archivo
+					ftp_server.retrbinary(f"RETR {archivo}", open(path_descarga, 'wb').write) # se descarga el archivo
 				print("Se descargo el archivo exitosamente")
-
-				# se listan los archivos del servidor
-				print("LISTA DE ARCHIVOS DEL SERVIDOR: ")
-				ftp_server.dir()
-
-				# se muestra el contenido del archivo descargado
-				print("El archivo descargado fue: %s", archivo)
-				file=open(archivo, "r")
-				print("CONTENIDO DEL ARCHIVO:  ", file.read())
 
 				# Se informa en el log
 				mensaje = "FTP DOWNLOAD: " + archivo
@@ -332,11 +372,13 @@ def cmdTransferencia():
 				mensaje2 = "transferencia: se descargo el archivo " + archivo
 				logMovimientos(mensaje2)
 
-				break
-
 			elif opcion==3:
+				# Se listan los archivos en el servidor
 				print("LISTA DE ARCHIVOS DEL SERVIDOR: ")
 				ftp_server.dir()
+
+			elif opcion==4:
+				break
 
 			else:
 				print("Opcion fuera de rango, vuelva a ingresar")
@@ -357,8 +399,9 @@ def cmdTransferencia():
 def cmdKill():
 	# el usuario elije el pid del proceso que quiere terminar
 	while True:
-		opcion1 = int(input("OPCIONES: \n 1)Ver lista de procesos corriendo \n 2)Ya tengo el PID del proceso que quiero terminar \n Elije una opcion: "))
-		if opcion1 == 1:
+		opcion = int(input("OPCIONES: \n 1) Ver lista de procesos corriendo \n 2) Terminar un proceso \n 3) Salir \n Elije una opcion: "))
+		# se muestran los procesos que estan corriendo
+		if opcion == 1:
 			for proc in psutil.process_iter():
 				try:
 					processName = proc.name()
@@ -366,20 +409,32 @@ def cmdKill():
 					print('PROCESO: ', processName , ' :::  PID = ', processID)
 				except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
 					pass
-		elif opcion1 == 2:
+
+		# se termina un proceso			
+		elif opcion == 2:
+			try:
+			# se le pide al usuario el PID del proceso
+				pid=int(input("Ingresa el pid del proceso: "))
+				os.kill(pid, signal.SIGKILL)
+				print("Se termino el proceso con PID ", pid)
+
+			# Se guarda en el log de movimientos
+				mensaje = "kill: se termino el proceso " + str(pid) 
+				logMovimientos(mensaje)
+			except:
+				print("error al terminar el proceso")
+
+				mensaje2 = "kill: error en la transferencia del archivo " + archivo
+				logErrores(mensaje2)
+
+		elif opcion == 3:
 			break
+
 		else:
 			print("Opcion fuera de rango, vuelva a ingresar")
 	
-	pid=int(input("Ingresa el pid del proceso: "))
-	os.kill(pid, signal.SIGKILL)
-	print("Se termino el proceso")
 
-	# Se guarda en el log de movimientos
-	mensaje = "kill: se termino el proceso " + str(pid) 
-	logMovimientos(mensaje)
-
-# Funcion para copiar archivo/s y/o directorio/s a un path especifico -> copiar [archivos/directorios] [path_destino]
+# Funcion para copiar archivo(s) y/o directorio(s) a un path especifico -> copiar [archivos/directorios] [path_destino]
 def cmdCopiar(cadena):
     # Se separa el argumento por los espacios
 	cadena = cadena.split(sep = ' ')
@@ -426,8 +481,10 @@ def cmdRenombrar(cadena):
 	original = cadena[0]
 	nuevo = cadena[1] 
 
+	# se verifica que el archivo/directorio exista
 	if os.path.exists(original):
 		try :
+			# se renombra el archivo/directorio
 			os.rename(original,nuevo)
 			print("Renombrado exitosamente a ") + str(nuevo)
 
@@ -459,7 +516,8 @@ def cmdMover(cadena):
 	for i in range(0, len(cadena)-1):
 		if os.path.exists(cadena[i]):
 			try :
-				shutil.move(cadena[i], destino) # Se mueve al path de destino
+				# Se mueve al path de destino
+				shutil.move(cadena[i], destino) 
 				print("Se movio exitosamente ", cadena[i])
 
 				# Se guarda en el log de movimientos
@@ -482,31 +540,36 @@ def cmdMover(cadena):
 # Funcion para cambiar la contrasena de username
 def change_passwd(username):
     datos=[]
-    print("Ingresa la nueva contrasena:  ")
-    new_passwd=getpass.getpass()
+	# se le pide al usuario que ingrese la contrasena nueva y la reconfirme
+    new_passwd=getpass.getpass("Ingresa la nueva contrasena:  ")
 
-    print("Reconfirma la contrasena: ")
-    new_passwd_r=getpass.getpass()
+    new_passwd_r=getpass.getpass("Reconfirma la contrasena: ")
 
+	# se verifica que las contrasenas coincidan
     if new_passwd==new_passwd_r:
+		# se encripta la contrasena
         cryptedpasswd=crypt.crypt(new_passwd, crypt.mksalt(crypt.METHOD_SHA512))
-        
-        
-        # Abrimos el archivo shadow
+
+        # Abrimos el archivo /etc/shadow
         with open("/etc/shadow", "r+") as file:
-            # Guardamos toda la info de shadow en datos
+            # Guardamos toda la info de /etc/shadow en datos
             for linea in file:
                 datos.append(linea.strip().split(":"))
+
         # Nos ubicamos al principio del archivo
             file.seek(0)
+
         # Buscamos la linea donde esta la info del usuario del que queremos cambiar la contra
             for i in range(len(datos)):
                 if username==datos[i][0]:
                     # Se cambia por la nueva contrasena
                     datos[i][1]=cryptedpasswd
+				# se guardan los nuevos datos en /etc/shadow
                 datos[i]=":".join(datos[i])
                 file.write(datos[i]+ "\n")
+
         print("Nueva contrasena establecida")
+
         # Se guarda el mensaje en el log
         msj="passwd: se establecio la contrasena de " + username
         logMovimientos(msj)
@@ -522,15 +585,16 @@ def change_passwd(username):
 def login():
 	# Se pide el usuario del que se quiere cambiar la contrasena
     username=input("Ingresa el nombre de usuario: ")
-	# Se obtiene la contrasena del archivo shadow
+	# Se obtiene la contrasena del archivo /etc/shadow
     actual_passwd=spwd.getspnam(username)
     cryptedpasswd=actual_passwd.sp_pwdp
     if cryptedpasswd:
 		# Se verifica la contrasena actual
-        print("Ingresa la contrasena actual de ", username)
-        passwd=getpass.getpass()
+        passwd=getpass.getpass("Ingresa la contrasena actual del usuario: ")
+		# se compara la contrasena ingresada con la que esta en /etc/shadow
         if compare_hash(crypt.crypt(passwd, cryptedpasswd), cryptedpasswd):
             print("Contrasena correcta")
+			# se cambia la contrasena
             change_passwd(username)
         else:
             print("Contrasena incorrecta")
@@ -543,24 +607,29 @@ def login():
         msj="password: no existe el usuario"
         logErrores(msj)
 
-
-def control_horario(tiempo): # Funcion que controla registra el horario de salida y entrada, y verfica los horarios e ips correspondientes
-	hora = time.strftime("%X") # Se obtiene la hora actual en el formato 00:00:00
+# Funcion que controla registra el horario de salida y entrada, y verfica los horarios e ips correspondientes
+def control_horario(tiempo): 
+	# Se obtiene la hora actual en el formato 00:00:00
+	hora = time.strftime("%X") 
 	hora = hora.split(":")
 	hora = hora[0] + "." + hora[1]
 	hora = float(hora)
-	usuario = getpass.getuser() # Se obtiene el usuario
+	# Se obtiene el usuario
+	usuario = getpass.getuser() 
 	print("Hora de inicio: ",hora)
 	linea = []
 	try: 
-		with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
+		#Se verifica que el usuario este en la carpeta de usuarios
+		with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file: 
 			for line in file:
-				if usuario in line: #Se obtiene la linea donde se encuentra la informacion del usuario
+				#Se obtiene la linea donde se encuentra la informacion del usuario
+				if usuario in line: 
 					linea.append(line)
 	except:
 		print("error")
 	linea = str(linea) 
-	linea = linea.split(sep = " ") # Se quitan los datos de la cadena donde se encuentra la informacion del usuario
+	# Se quitan los datos de la cadena donde se encuentra la informacion del usuario
+	linea = linea.split(sep = " ") 
 	horario_inicio_oficial = linea[7]
 	horario_inicio_oficial = horario_inicio_oficial.split(sep = ":")
 	horario_inicio_oficial = horario_inicio_oficial[0] + "." + horario_inicio_oficial[1]
@@ -572,7 +641,8 @@ def control_horario(tiempo): # Funcion que controla registra el horario de salid
 	ip_oficial = linea[6]
 	ip_actual = getIp(0)
 	if tiempo==0 :
-		if hora < horario_inicio_oficial or hora > horario_inicio_oficial: # Se verifica y registra el horario de inicio de sesion
+		# Se verifica y registra el horario de inicio de sesion
+		if hora < horario_inicio_oficial or hora > horario_inicio_oficial: 
 			mensaje = usuario + " inicio sesion fuera del rango del rango horario"
 			logusuarioHorarios(mensaje)
 		else:
@@ -588,7 +658,8 @@ def control_horario(tiempo): # Funcion que controla registra el horario de salid
 			logRegistroDiario(mensaje)
 
 	if tiempo==1 :
-		if hora < horario_inicio_oficial or hora > horario_inicio_oficial: #Se verifica y registra el horario de cierre de sesion
+		#Se verifica y registra el horario de cierre de sesion
+		if hora < horario_inicio_oficial or hora > horario_inicio_oficial: 
 			mensaje = usuario + " cerro sesion fuera del rango horario"
 			logusuarioHorarios(mensaje)
 		mensaje = usuario + "Cerro sesion dentro del rango horario"
@@ -596,7 +667,8 @@ def control_horario(tiempo): # Funcion que controla registra el horario de salid
 
 	print(horario_inicio_oficial,horario_salida_oficial)
 
-def cmdPropietario(cadena):  #Funcion para cambiar de propietarios  Formato USUARIO:GRUPO
+#Funcion para cambiar de propietarios  Formato USUARIO:GRUPO
+def cmdPropietario(cadena):  
 	cadena = cadena.split(sep=' ') #se separa la cadena
 	path = cadena[0]
 	ids = cadena[1]
@@ -631,7 +703,8 @@ def cmdPropietario(cadena):  #Funcion para cambiar de propietarios  Formato USUA
 		mensaje = "propietario: no existe el archivo" + path
 		logErrores(mensaje)
 
-def getIp(print_ip): #Funcion para obtener la ip del usuario
+#Funcion para obtener la ip del usuario
+def getIp(print_ip): 
 ## getting the hostname by socket.gethostname() method
 	hostname = socket.gethostname()
 ## getting the IP address using socket.gethostbyname() method
@@ -640,7 +713,8 @@ def getIp(print_ip): #Funcion para obtener la ip del usuario
 		print(ip_address)
 	return ip_address 
 
-def isIPv4(s): #Funcion que verifica que sea una ip de tipo ipv4
+#Funcion que verifica que sea una ip de tipo ipv4
+def isIPv4(s): 
          try: return str(int(s)) == s and 0 <= int(s) <= 255
          except: return False
 
@@ -700,6 +774,13 @@ def levantar_demonios():
 		mensaje = "levantar: error al levantar demonio"
 		logErrores(mensaje)
 
+def cmdAyuda():
+	print("listar [path]: Se listan los archivos en path \n listar: se listan los archivos en el path actual \n ir [path_del_directorio]: nos movemos al directorio especificado \n")
+	print("copiar [nombre de archivos/directorios] [path de destino]: se copian los archivos/directorios en el destino \n mover [nombre de los archivos/directorios] [path de destino]: Se mueven los archivos/directorios al destino \n")
+	print("renombrar [nombre original] [nuevo nombre]: Se renombra el archivo o directorio \n creardir [path del directorio]: Se crea un nuevo directorio \n pwd: se imprime el path actual\n ")
+	print("kill: Comando para terminar un proceso \n adduser: comando para agregar un nuevo usuario \n transfer: comando para subir/descargar un archivo de un servidor FTP \n password: comando para cambiar la contrasena de un usuario\n")
+	print("permisos [permisos en octal] [archivo]: se cambian los permisos del archivo \n historial: se muestra el historial de comandos \n buscar [palabra] [archivo]: se busca la palabra dentro del archivo \n getip: Se muestra la direccion IP del usuario actual\n")
+	print("propietario [directorio] []: Se cambia el propietario del directorio \n levantar: se levanta un demonio \n ejecutar [otro_comando]: Se ejecuta el otro comando \n salir: se sale de la shell")
 
 
 
@@ -740,9 +821,9 @@ def main():
 			cmdPermisos(comando[:9])
 			historial.append("permisos")
 			
-		elif (comando[:7] == "history"):
+		elif (comando[:7] == "historial"):
 			cmdHistory(historial)
-			historial.append("permisos")
+			historial.append("historial")
 			
 		elif (comando[:8] == "ejecutar"):
 			cmdEjecutar(comando[8:])
@@ -793,6 +874,11 @@ def main():
 		elif(comando == "levantar"):
 			levantar_demonios()
 			historial.append("levantar")
+
+		elif(comando=="ayuda" ):
+			cmdAyuda()
+		else:
+			print("Comando no reconocido, ejecuta 'ayuda' para ver la lista de comandos ")
 
 if __name__ == "__main__":
     main()
