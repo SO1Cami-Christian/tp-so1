@@ -1,13 +1,15 @@
 ﻿# Bash_CamiChris
 
-Desarrollamos esta shell para nuestro sistema LFS
-
+Desarrollamos esta shell para nuestro sistema LFS 
+La documentación del LFS se puede leer [aquí](https://drive.google.com/file/d/19v0TT7eucYRGho_KtLao71PmBHS32aAh/view?usp=sharing)
+El pdf del manual de instrucciones se puede ver [aquí](https://drive.google.com/file/d/1-gOU7tg9mlGrJXEG5-KnSH_Ih2hLkoqb/view?usp=sharing)
 
 
 ##  Pre-requisitos
 Antes de instalar la shell, se recomienda instalar la siguiente librería
 
-    Python 3 -m pip install psutil
+    sudo apt install python3-pip
+    pip install psutil
 
 También se deben crear los logs donde se guardarán los movimientos del usuario
 
