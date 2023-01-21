@@ -338,35 +338,19 @@ def cmdBuscar(cadena):
 					# Se guarda en el log de movimientos
 					mensaje = "buscar: se encontro la cadena en el archivo"
 					existe =1  
-<<<<<<< HEAD
 					logMovimientos(mensaje)
-=======
-					#logMovimientos(mensaje)
->>>>>>> refs/remotes/origin/main
+					print("hola")
 	else:
 		print("No existe el archivo.")
 		# Se guarda en el log de errores
 		mensaje = "buscar: No existe el archivo."
-<<<<<<< HEAD
 		logErrores(mensaje)			
-=======
-		#logErrores(mensaje)			
->>>>>>> refs/remotes/origin/main
 
 	if existe == 0:
 		print("La cadena no existe en el archivo.")
 	# Se guarda en el log de errores
 		mensaje = "buscar: La cadena no existe en el archivo."
-<<<<<<< HEAD
 		logErrores(mensaje)
-=======
-		#logErrores(mensaje)
-
-			# Se guarda en el log de movimientos
-		mensaje = "buscar: no se encontro la cadena en el archivo"  
-		#logMovimientos(mensaje)
-
->>>>>>> refs/remotes/origin/main
 
 			# Se guarda en el log de movimientos
 		mensaje = "buscar: no se encontro la cadena en el archivo"  
@@ -691,20 +675,10 @@ def control_horario(tiempo):
 	hora = hora.split(":")
 	hora = hora[0] + "." + hora[1]
 	hora = float(hora)
-<<<<<<< HEAD
-	# Se obtiene el usuario
-	usuario = getpass.getuser() 
-	print("Hora de inicio: ",hora)
-	linea = []
-	try: 
-		#Se verifica que el usuario este en la carpeta de usuarios
-		with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file: 
-=======
 	usuario = getpass.getuser() # Se obtiene el usuario
 	linea = []
 	try: 
 		with open("/home/chris/Desktop/tp-so1/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
->>>>>>> refs/remotes/origin/main
 			for line in file:
 				#Se obtiene la linea donde se encuentra la informacion del usuario
 				if usuario in line: 
@@ -754,48 +728,6 @@ def control_horario(tiempo):
 
 	except:
 		print("error")
-<<<<<<< HEAD
-	linea = str(linea) 
-	# Se quitan los datos de la cadena donde se encuentra la informacion del usuario
-	linea = linea.split(sep = " ") 
-	horario_inicio_oficial = linea[7]
-	horario_inicio_oficial = horario_inicio_oficial.split(sep = ":")
-	horario_inicio_oficial = horario_inicio_oficial[0] + "." + horario_inicio_oficial[1]
-	horario_inicio_oficial = float(horario_inicio_oficial)
-	horario_salida_oficial = linea[8]
-	horario_salida_oficial = horario_salida_oficial.split(sep = ":")
-	horario_salida_oficial = horario_salida_oficial[0] + "." + horario_salida_oficial[1]
-	horario_salida_oficial = float(horario_salida_oficial[:5])
-	ip_oficial = linea[6]
-	ip_actual = getIp(0)
-	if tiempo==0 :
-		# Se verifica y registra el horario de inicio de sesion
-		if hora < horario_inicio_oficial or hora > horario_inicio_oficial: 
-			mensaje = usuario + " inicio sesion fuera del rango del rango horario"
-			logusuarioHorarios(mensaje)
-		else:
-			mensaje = usuario +" Inicio sesion dentro del rango horario"
-			logRegistroDiario(mensaje)
-
-		if ip_oficial != ip_actual:
-			mensaje = "La ip no esta habilitada, ip: " + ip_actual
-			logRegistroDiario(mensaje)
-
-		else: 
-			mensaje = "Inicio sesion con la ip habilitada" + ip_actual
-			logRegistroDiario(mensaje)
-
-	if tiempo==1 :
-		#Se verifica y registra el horario de cierre de sesion
-		if hora < horario_inicio_oficial or hora > horario_inicio_oficial: 
-			mensaje = usuario + " cerro sesion fuera del rango horario"
-			logusuarioHorarios(mensaje)
-		mensaje = usuario + "Cerro sesion dentro del rango horario"
-		logRegistroDiario(mensaje)
-
-	print(horario_inicio_oficial,horario_salida_oficial)
-=======
->>>>>>> refs/remotes/origin/main
 
 #Funcion para cambiar de propietarios  Formato USUARIO:GRUPO
 def cmdPropietario(cadena):  
@@ -805,38 +737,6 @@ def cmdPropietario(cadena):
 	ids = ids.split(sep=':')
 	uid = ids[0]
 	gid = ids[1]
-<<<<<<< HEAD
-	if os.path.exists(path):
-		try:
-			with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
-				for line in file:
-					if uid in line: #Se obtiene la linea donde se encuentra la informacion del usuario
-						with open("/home/chris/Downloads/tp-so1/registroUsuarios.log") as file:
-							for line in file:
-								if gid in line: #Se obtiene la linea donde se encuentra la informacion del usuario
-									os.chown(path, uid, gid)
-									print("Se cambio de propietario exitosamente")
-									mensaje = "propietario: se cambio de propietario " + path
-									logMovimientos(mensaje)
-								else:
-									mensaje = "propietario: no existe el gid " + gid
-									logErrores(mensaje)
-					else:
-						mensaje = "propietario: no existe el uid " + uid
-						logErrores(mensaje)
-
-		except:
-			print("Error al realizar operacion")
-			mensaje = "propietario: error al realizar la operacion"
-			logErrores(mensaje)
-	else:
-		print("No existe el archivo")
-		mensaje = "propietario: no existe el archivo" + path
-		logErrores(mensaje)
-
-#Funcion para obtener la ip del usuario
-def getIp(print_ip): 
-=======
 	print(path)
 	print(uid)
 	print(gid)
@@ -865,7 +765,6 @@ def getIp(print_ip):
 		#logErrores(mensaje)
 		
 def getIp(print_ip): #Funcion para obtener la ip del usuario
->>>>>>> refs/remotes/origin/main
 ## getting the hostname by socket.gethostname() method
 	hostname = socket.gethostname()
 ## getting the IP address using socket.gethostbyname() method
