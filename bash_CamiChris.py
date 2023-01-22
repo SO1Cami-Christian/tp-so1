@@ -19,16 +19,16 @@ import spwd
 from hmac import compare_digest as compare_hash
 #registroUsuarios : 2023-01-10 16:01:41,269 : root 192.168.100.78 08:00 12:00
 # ---LOGS--- #
-	#IMPORTANTE:: SE DEBE CREAR LA CARPETA /var/log/shell ANTES
-def logTransferencias(status, message):
+	#LEER README PARA INSTALACION Y CREACION DE LOS LOGS
+def logRegistroUsuarios(message):
 	#creamos/llamamos al log
-        log = logging.getLogger('transferencias')
+        log = logging.getLogger('registroUsuarios')
         log.setLevel(logging.INFO)
         #creamos el archivo donde se van a almacenar los registros
-        fileHandler = logging.FileHandler('/var/log/shell/shell_transferencias.log')
+        fileHandler = logging.FileHandler('/var/log/shell/registro_usuarios.log')
         fileHandler.setLevel(logging.DEBUG)
         #le damos el formato deseado
-        formato = logging.Formatter('%(asctime)s : %(message)s')
+        formato = logging.Formatter('%(name)s : %(asctime)s : %(message)s')
         fileHandler.setFormatter(formato)
         #agregamos al log
         log.addHandler(fileHandler)
@@ -38,15 +38,11 @@ def logTransferencias(status, message):
         log.removeHandler(fileHandler)
         fileHandler.flush()
         fileHandler.close()
-
 	
-
 def logErrores(message):
-	# Configuramos el logger
-	#creamos/llamamos al log
         log = logging.getLogger('systemError')
         log.setLevel(logging.INFO)
-        #creamos el archivo donde se van a almacenar los registros
+        # Abrimos el archivo donde escribimos los logs
         fileHandler = logging.FileHandler('/var/log/shell/sistema_error.log')
         fileHandler.setLevel(logging.ERROR)
         #le damos el formato deseado
@@ -79,13 +75,13 @@ def logMovimientos(message):
         log.removeHandler(fileHandler)
         fileHandler.flush()
         fileHandler.close()
-
-def logRegistroUsuarios(message):
+	
+def logTransferencias(status, message):
 	#creamos/llamamos al log
-        log = logging.getLogger('registroUsuarios')
+        log = logging.getLogger('transferencias')
         log.setLevel(logging.INFO)
         #creamos el archivo donde se van a almacenar los registros
-        fileHandler = logging.FileHandler('/var/log/shell/registro_usuarios.log')
+        fileHandler = logging.FileHandler('/var/log/shell/shell_transferencias.log')
         fileHandler.setLevel(logging.DEBUG)
         #le damos el formato deseado
         formato = logging.Formatter('%(asctime)s : %(message)s')
@@ -177,7 +173,7 @@ def control_horario(tiempo):
 	usuario = getpass.getuser() # Se obtiene el usuario
 	linea = []
 	try: 
-		with open("/var/log/shell/registroUsuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
+		with open("/var/log/shell/registro_usuarios.log") as file: #Se verifica que el usuario este en la carpeta de usuarios
 			for line in file:
 				#Se obtiene la linea donde se encuentra la informacion del usuario
 				if usuario in line: 
@@ -455,7 +451,6 @@ def cmdBuscar(cadena):
 					mensaje = "buscar: se encontro la cadena en el archivo"
 					existe =1  
 					logMovimientos(mensaje)
-					print("hola")
 	else:
 		print("No existe el archivo.")
 		# Se guarda en el log de errores
@@ -917,15 +912,17 @@ def cmdAddUser():
 				mensaje = "adduser: se agrego el usuario " + usuario
 				print(mensaje)
 				logMovimientos(mensaje)
+				msj=usuario + ' ' + ip + ' ' + horario_de_entrada + ' ' + horario_de_salida
+				logRegistroUsuarios(msj)
 
 			except:
 				mensaje = "Error al agregar usuario"
 				print(mensaje)
-				#logErrores(mensaje)
+				logErrores(mensaje)
 		else:
 			mensaje = "adduser: se cancelo el registro de usuario"
 			print(mensaje)
-			#logErrores(mensaje)
+			logErrores(mensaje)
 	else:
 		mensaje = "adduser: solo root puede agregar usuarios"
 		print(mensaje)
